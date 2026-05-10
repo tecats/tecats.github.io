@@ -1747,27 +1747,7 @@
                         
                         // 创建统一查找函数，支持查找物品、线索、角色、场景物品
                         const findObject = (name) => {
-                            // 1. 查找玩家物品档案中的物品
-                            const itemId = this.state.inventory.find(id => {
-                                const item = this.state.data.items[id];
-                                return item && item.label === name;
-                            });
-                            if(itemId) return { type: 'inventory', id: itemId, data: this.state.data.items[itemId] };
-                            
-                            // 2. 查找已发现的线索
-                            const clueId = this.state.foundClueIds.find(id => {
-                                const clue = this.state.data.clues[id];
-                                return clue && clue.label === name;
-                            });
-                            if(clueId) return { type: 'clue', id: clueId, data: this.state.data.clues[clueId] };
-                            
-                            // 3. 查找角色
-                            const charId = Object.keys(this.state.data.chars).find(id => 
-                                this.state.data.chars[id].name === name
-                            );
-                            if(charId) return { type: 'char', id: charId, data: this.state.data.chars[charId] };
-                            
-                            // 4. 查找场景物品
+                            // 1. 优先查找场景物品（避免与已记录物品冲突）
                             const currentScene = this.state.data.scenes[this.state.currentScene];
                             if(currentScene && currentScene.content) {
                                 const itemMatches = currentScene.content.match(/\[item:(\w+)\]/g);
@@ -1780,6 +1760,26 @@
                                     if(sceneItemId) return { type: 'sceneItem', id: sceneItemId, data: this.state.data.items[sceneItemId] };
                                 }
                             }
+                            
+                            // 2. 查找玩家物品档案中的物品
+                            const itemId = this.state.inventory.find(id => {
+                                const item = this.state.data.items[id];
+                                return item && item.label === name;
+                            });
+                            if(itemId) return { type: 'inventory', id: itemId, data: this.state.data.items[itemId] };
+                            
+                            // 3. 查找已发现的线索
+                            const clueId = this.state.foundClueIds.find(id => {
+                                const clue = this.state.data.clues[id];
+                                return clue && clue.label === name;
+                            });
+                            if(clueId) return { type: 'clue', id: clueId, data: this.state.data.clues[clueId] };
+                            
+                            // 4. 查找角色
+                            const charId = Object.keys(this.state.data.chars).find(id => 
+                                this.state.data.chars[id].name === name
+                            );
+                            if(charId) return { type: 'char', id: charId, data: this.state.data.chars[charId] };
                             
                             return null;
                         };
