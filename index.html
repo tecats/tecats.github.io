@@ -743,7 +743,7 @@
             <div class="panel command-panel">
                 <div class="panel-title">TERMINAL_INPUT (指令交互)</div>
                 <div style="flex:1; display:flex; align-items:center;">
-                    <input type="text" id="command-line" autocomplete="off" placeholder="查询/捕获/前往/出示/更新">
+                    <input type="text" id="command-line" autocomplete="off" placeholder="查询/捕获/前往/出示">
                 </div>
             </div>
             <div class="panel" style="border-top: none;">
@@ -1136,8 +1136,12 @@
                     this.addLog(`T.E.C-OS ${CONFIG.VERSION} 内核已启动。吸取完成，已确认权限。`, "sys");
                 }
                 
-                document.getElementById('command-line').onkeypress = (e) => {
-                    if(e.key === 'Enter') this.handleCommand(e.target.value);
+                document.getElementById('command-line').onkeydown = (e) => {
+                    if(e.key === 'Enter') {
+                        const input = e.target.value;
+                        e.target.value = "";
+                        this.handleCommand(input);
+                    }
                 };
                 document.addEventListener('click', () => {
                     document.getElementById('context-menu').style.display = 'none';
@@ -1720,7 +1724,7 @@
             },
 
             handleCommand(val) {
-                const input = val.trim();
+                const input = val.replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g, ' ').trim();
                 if(!input) return;
                 this.addLog(`CMD> ${escapeHtml(input)}`, "cmd");
                 document.getElementById('command-line').value = "";
