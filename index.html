@@ -1740,95 +1740,160 @@
                 else if(input.startsWith("前往")) this.executeGoTo(input.replace(/^前往\s+/, "").trim());
                 else if(input.startsWith("检查更新") || input === "更新") this.manualCheckUpdate();
                 else if(input.startsWith("出示")) {
-                    const parts = input.replace(/^出示\s+/, "").split(/\s+/);
-                    if(parts.length >= 2) {
-                        const name1 = parts[0];
-                        const name2 = parts[1];
+                    const content = input.replace(/^出示\s+/, "").trim();
+                    
+                    // 创建统一查找函数，支持查找物品、线索、角色、场景物品
+                    const findObject = (name) => {
+                        // 1. 优先查找玩家物品档案中的物品（只有被记录的物品才可出示）
+                        const itemId = this.state.inventory.find(id => {
+                            const item = this.state.data.items[id];
+                            return item && item.label === name;
+                        });
+                        if(itemId) return { type: 'inventory', id: itemId, data: this.state.data.items[itemId] };
                         
-                        // 创建统一查找函数，支持查找物品、线索、角色、场景物品
-                        const findObject = (name) => {
-                            // 1. 优先查找场景物品（避免与已记录物品冲突）
-                            const currentScene = this.state.data.scenes[this.state.currentScene];
-                            if(currentScene && currentScene.content) {
-                                const itemMatches = currentScene.content.match(/\[item:(\w+)\]/g);
-                                if(itemMatches) {
-                                    const sceneItemIds = itemMatches.map(match => match.replace('[item:', '').replace(']', ''));
-                                    const sceneItemId = sceneItemIds.find(id => {
-                                        const item = this.state.data.items[id];
-                                        return item && item.label === name;
-                                    });
-                                    if(sceneItemId) return { type: 'sceneItem', id: sceneItemId, data: this.state.data.items[sceneItemId] };
-                                }
+                        // 2. 查找场景物品（仅当该物品未被捕获时）
+                        const currentScene = this.state.data.scenes[this.state.currentScene];
+                        if(currentScene && currentScene.content) {
+                            const itemMatches = currentScene.content.match(/\[item:(\w+)\]/g);
+                            if(itemMatches) {
+                                const sceneItemIds = itemMatches.map(match => match.replace('[item:', '').replace(']', ''));
+                                const sceneItemId = sceneItemIds.find(id => {
+                                    // 如果该物品已经被捕获到物品档案中，则跳过场景物品版本
+                                    if(this.state.inventory.includes(id)) return false;
+                                    const item = this.state.data.items[id];
+                                    return item && item.label === name;
+                                });
+                                if(sceneItemId) return { type: 'sceneItem', id: sceneItemId, data: this.state.data.items[sceneItemId] };
                             }
-                            
-                            // 2. 查找玩家物品档案中的物品
-                            const itemId = this.state.inventory.find(id => {
-                                const item = this.state.data.items[id];
-                                return item && item.label === name;
-                            });
-                            if(itemId) return { type: 'inventory', id: itemId, data: this.state.data.items[itemId] };
-                            
-                            // 3. 查找已发现的线索
-                            const clueId = this.state.foundClueIds.find(id => {
-                                const clue = this.state.data.clues[id];
-                                return clue && clue.label === name;
-                            });
-                            if(clueId) return { type: 'clue', id: clueId, data: this.state.data.clues[clueId] };
-                            
-                            // 4. 查找角色
-                            const charId = Object.keys(this.state.data.chars).find(id => 
-                                this.state.data.chars[id].name === name
-                            );
-                            if(charId) return { type: 'char', id: charId, data: this.state.data.chars[charId] };
-                            
-                            return null;
-                        };
-                        
-                        // 查找两个对象
-                        const obj1 = findObject(name1);
-                        const obj2 = findObject(name2);
-                        
-                        if(!obj1 && !obj2) {
-                            this.addLog(`错误：找不到"${name1}"和"${name2}"。`, "error");
-                            return;
-                        }
-                        if(!obj1) {
-                            this.addLog(`错误：找不到"${name1}"。`, "error");
-                            return;
-                        }
-                        if(!obj2) {
-                            this.addLog(`错误：找不到"${name2}"。`, "error");
-                            return;
                         }
                         
-                        let reacted = false;
+                        // 3. 查找已发现的线索
+                        const clueId = this.state.foundClueIds.find(id => {
+                            const clue = this.state.data.clues[id];
+                            return clue && clue.label === name;
+                        });
+                        if(clueId) return { type: 'clue', id: clueId, data: this.state.data.clues[clueId] };
                         
-                        // 情况1：obj1是物品/线索，obj2是角色
-                        if((obj1.type === 'inventory' || obj1.type === 'clue') && obj2.type === 'char') {
-                            reacted = this.executePresentToChar(obj1, obj2);
+                        // 4. 查找角色
+                        const charId = Object.keys(this.state.data.chars).find(id => 
+                            this.state.data.chars[id].name === name
+                        );
+                        if(charId) return { type: 'char', id: charId, data: this.state.data.chars[charId] };
+                        
+                        return null;
+                    };
+                    
+                    // 智能解析：从候选名称列表中匹配两个对象，优先匹配较长的名称
+                    const getCandidates = () => {
+                        const candidates = [];
+                        
+                        // 添加物品档案中的物品（只有被记录的物品才可出示）- 优先添加
+                        this.state.inventory.forEach(id => {
+                            const item = this.state.data.items[id];
+                            if(item && content.includes(item.label)) {
+                                candidates.push({ name: item.label, type: 'inventory' });
+                            }
+                        });
+                        
+                        // 添加场景物品（仅当该物品未被捕获时）
+                        const currentScene = this.state.data.scenes[this.state.currentScene];
+                        if(currentScene && currentScene.content) {
+                            const itemMatches = currentScene.content.match(/\[item:(\w+)\]/g);
+                            if(itemMatches) {
+                                const sceneItemIds = itemMatches.map(match => match.replace('[item:', '').replace(']', ''));
+                                sceneItemIds.forEach(id => {
+                                    // 如果该物品已经被捕获到物品档案中，则跳过场景物品版本
+                                    if(this.state.inventory.includes(id)) return;
+                                    const item = this.state.data.items[id];
+                                    if(item && content.includes(item.label)) {
+                                        candidates.push({ name: item.label, type: 'sceneItem' });
+                                    }
+                                });
+                            }
                         }
                         
-                        // 情况2：obj1是物品/线索，obj2是场景物品
-                        if(!reacted && (obj1.type === 'inventory' || obj1.type === 'clue') && obj2.type === 'sceneItem') {
-                            reacted = this.executePresentToSceneItem(obj1, obj2);
-                        }
+                        // 添加线索
+                        this.state.foundClueIds.forEach(id => {
+                            const clue = this.state.data.clues[id];
+                            if(clue && content.includes(clue.label)) {
+                                candidates.push({ name: clue.label, type: 'clue' });
+                            }
+                        });
                         
-                        // 情况3：obj2是物品/线索，obj1是角色（反向匹配）
-                        if(!reacted && obj1.type === 'char' && (obj2.type === 'inventory' || obj2.type === 'clue')) {
-                            reacted = this.executePresentToChar(obj2, obj1);
-                        }
+                        // 添加角色
+                        Object.keys(this.state.data.chars).forEach(id => {
+                            const char = this.state.data.chars[id];
+                            if(char && content.includes(char.name)) {
+                                candidates.push({ name: char.name, type: 'char' });
+                            }
+                        });
                         
-                        // 情况4：obj2是物品/线索，obj1是场景物品（反向匹配）
-                        if(!reacted && obj1.type === 'sceneItem' && (obj2.type === 'inventory' || obj2.type === 'clue')) {
-                            reacted = this.executePresentToSceneItem(obj2, obj1);
+                        // 按名称长度降序排序，优先匹配较长的名称
+                        return candidates.sort((a, b) => b.name.length - a.name.length);
+                    };
+                    
+                    const candidates = getCandidates();
+                    let obj1 = null, obj2 = null;
+                    let remainingContent = content;
+                    
+                    // 查找第一个匹配对象
+                    for(const candidate of candidates) {
+                        if(remainingContent.includes(candidate.name)) {
+                            obj1 = findObject(candidate.name);
+                            remainingContent = remainingContent.replace(candidate.name, "").trim();
+                            break;
                         }
-                        
-                        // 如果没有匹配到任何反应
-                        if(!reacted) {
-                            this.addLog(`无法在"${name1}"和"${name2}"之间建立关联。`, "error");
+                    }
+                    
+                    // 在剩余内容中查找第二个匹配对象
+                    if(obj1 && remainingContent) {
+                        for(const candidate of candidates) {
+                            if(remainingContent.includes(candidate.name)) {
+                                obj2 = findObject(candidate.name);
+                                break;
+                            }
                         }
-                    } else {
-                        this.addLog("用法：出示 [物品/线索] [目标/物品]", "sys");
+                    }
+                    
+                    if(!obj1 && !obj2) {
+                        this.addLog(`错误：找不到可出示的对象。`, "error");
+                        return;
+                    }
+                    
+                    if(!obj1) {
+                        this.addLog(`错误：找不到第一个对象。`, "error");
+                        return;
+                    }
+                    if(!obj2) {
+                        this.addLog(`错误：找不到第二个对象。`, "error");
+                        return;
+                    }
+                    
+                    let reacted = false;
+                    
+                    // 情况1：obj1是物品/线索，obj2是角色
+                    if((obj1.type === 'inventory' || obj1.type === 'clue') && obj2.type === 'char') {
+                        reacted = this.executePresentToChar(obj1, obj2);
+                    }
+                    
+                    // 情况2：obj1是物品/线索，obj2是场景物品
+                    if(!reacted && (obj1.type === 'inventory' || obj1.type === 'clue') && obj2.type === 'sceneItem') {
+                        reacted = this.executePresentToSceneItem(obj1, obj2);
+                    }
+                    
+                    // 情况3：obj2是物品/线索，obj1是角色（反向匹配）
+                    if(!reacted && obj1.type === 'char' && (obj2.type === 'inventory' || obj2.type === 'clue')) {
+                        reacted = this.executePresentToChar(obj2, obj1);
+                    }
+                    
+                    // 情况4：obj2是物品/线索，obj1是场景物品（反向匹配）
+                    if(!reacted && obj1.type === 'sceneItem' && (obj2.type === 'inventory' || obj2.type === 'clue')) {
+                        reacted = this.executePresentToSceneItem(obj2, obj1);
+                    }
+                    
+                    // 如果没有匹配到任何反应
+                    if(!reacted) {
+                        this.addLog(`无法在"${obj1.data.label || obj1.data.name}"和"${obj2.data.label || obj2.data.name}"之间建立关联。`, "error");
                     }
                 }
             },
