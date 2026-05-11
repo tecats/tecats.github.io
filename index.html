@@ -1742,28 +1742,36 @@
                 else if(input.startsWith("出示")) {
                     const content = input.replace(/^出示\s+/, "").trim();
                     
-                    // 创建统一查找函数，支持查找物品、线索、角色、场景物品
+                    // 创建统一查找函数
                     const findObject = (name) => {
-                        // 1. 优先查找玩家物品档案中的物品（只有被记录的物品才可出示）
+                        // 1. 查找已记录的物品（优先）
                         const itemId = this.state.inventory.find(id => {
                             const item = this.state.data.items[id];
                             return item && item.label === name;
                         });
-                        if(itemId) return { type: 'inventory', id: itemId, data: this.state.data.items[itemId] };
+                        if(itemId) return { type: 'item', id: itemId, data: this.state.data.items[itemId] };
                         
-                        // 2. 查找场景物品（仅当该物品未被捕获时）
+                        // 2. 查找未记录的物品（检查是否在当前场景）
                         const currentScene = this.state.data.scenes[this.state.currentScene];
                         if(currentScene && currentScene.content) {
                             const itemMatches = currentScene.content.match(/\[item:(\w+)\]/g);
                             if(itemMatches) {
                                 const sceneItemIds = itemMatches.map(match => match.replace('[item:', '').replace(']', ''));
                                 const sceneItemId = sceneItemIds.find(id => {
-                                    // 如果该物品已经被捕获到物品档案中，则跳过场景物品版本
-                                    if(this.state.inventory.includes(id)) return false;
                                     const item = this.state.data.items[id];
                                     return item && item.label === name;
                                 });
-                                if(sceneItemId) return { type: 'sceneItem', id: sceneItemId, data: this.state.data.items[sceneItemId] };
+                                if(sceneItemId) {
+                                    // 检查物品是否可以记录
+                                    const item = this.state.data.items[sceneItemId];
+                                    if(item.canBePicked === false) {
+                                        // 不能记录的物品，直接返回
+                                        return { type: 'item', id: sceneItemId, data: item };
+                                    } else {
+                                        // 可以记录的物品，提示需要先记录
+                                        return { type: 'needs_record', id: sceneItemId, data: item };
+                                    }
+                                }
                             }
                         }
                         
@@ -1783,30 +1791,29 @@
                         return null;
                     };
                     
-                    // 智能解析：从候选名称列表中匹配两个对象，优先匹配较长的名称
+                    // 智能解析：从候选名称列表中匹配两个对象
                     const getCandidates = () => {
                         const candidates = [];
                         
-                        // 添加物品档案中的物品（只有被记录的物品才可出示）- 优先添加
+                        // 添加物品档案中的物品
                         this.state.inventory.forEach(id => {
                             const item = this.state.data.items[id];
                             if(item && content.includes(item.label)) {
-                                candidates.push({ name: item.label, type: 'inventory' });
+                                candidates.push({ name: item.label, type: 'item' });
                             }
                         });
                         
-                        // 添加场景物品（仅当该物品未被捕获时）
+                        // 添加场景物品
                         const currentScene = this.state.data.scenes[this.state.currentScene];
                         if(currentScene && currentScene.content) {
                             const itemMatches = currentScene.content.match(/\[item:(\w+)\]/g);
                             if(itemMatches) {
                                 const sceneItemIds = itemMatches.map(match => match.replace('[item:', '').replace(']', ''));
                                 sceneItemIds.forEach(id => {
-                                    // 如果该物品已经被捕获到物品档案中，则跳过场景物品版本
-                                    if(this.state.inventory.includes(id)) return;
+                                    if(this.state.inventory.includes(id)) return; // 已记录的物品跳过
                                     const item = this.state.data.items[id];
                                     if(item && content.includes(item.label)) {
-                                        candidates.push({ name: item.label, type: 'sceneItem' });
+                                        candidates.push({ name: item.label, type: item.canBePicked === false ? 'item' : 'needs_record' });
                                     }
                                 });
                             }
@@ -1869,25 +1876,35 @@
                         return;
                     }
                     
+                    // 检查是否有物品需要先记录
+                    if(obj1.type === 'needs_record') {
+                        this.addLog(`请先记录"${obj1.data.label}"到物品档案中才能出示。`, "error");
+                        return;
+                    }
+                    if(obj2.type === 'needs_record') {
+                        this.addLog(`请先记录"${obj2.data.label}"到物品档案中才能出示。`, "error");
+                        return;
+                    }
+                    
                     let reacted = false;
                     
                     // 情况1：obj1是物品/线索，obj2是角色
-                    if((obj1.type === 'inventory' || obj1.type === 'clue') && obj2.type === 'char') {
+                    if((obj1.type === 'item' || obj1.type === 'clue') && obj2.type === 'char') {
                         reacted = this.executePresentToChar(obj1, obj2);
                     }
                     
-                    // 情况2：obj1是物品/线索，obj2是场景物品
-                    if(!reacted && (obj1.type === 'inventory' || obj1.type === 'clue') && obj2.type === 'sceneItem') {
+                    // 情况2：obj1是物品/线索，obj2是物品
+                    if(!reacted && (obj1.type === 'item' || obj1.type === 'clue') && obj2.type === 'item') {
                         reacted = this.executePresentToSceneItem(obj1, obj2);
                     }
                     
                     // 情况3：obj2是物品/线索，obj1是角色（反向匹配）
-                    if(!reacted && obj1.type === 'char' && (obj2.type === 'inventory' || obj2.type === 'clue')) {
+                    if(!reacted && obj1.type === 'char' && (obj2.type === 'item' || obj2.type === 'clue')) {
                         reacted = this.executePresentToChar(obj2, obj1);
                     }
                     
-                    // 情况4：obj2是物品/线索，obj1是场景物品（反向匹配）
-                    if(!reacted && obj1.type === 'sceneItem' && (obj2.type === 'inventory' || obj2.type === 'clue')) {
+                    // 情况4：obj2是物品/线索，obj1是物品（反向匹配）
+                    if(!reacted && obj1.type === 'item' && (obj2.type === 'item' || obj2.type === 'clue')) {
                         reacted = this.executePresentToSceneItem(obj2, obj1);
                     }
                     
@@ -2016,20 +2033,14 @@
                 let reactionKey = null;
                 let react = null;
                 
-                // 优先检查角色的物品反应映射 itemReactions
-                if(itemObj.type === 'inventory' && char.itemReactions && char.itemReactions[itemId]) {
+                // 优先检查角色的物品反应映射 itemReactions（不限制物品类型）
+                if(char.itemReactions && char.itemReactions[itemId]) {
                     reactionKey = itemId;
                     react = char.itemReactions[itemId];
                 }
                 
                 // 然后检查通用reactions中的物品ID（兼容旧数据格式）
-                if(!react && itemObj.type === 'inventory' && char.reactions && char.reactions[itemId]) {
-                    reactionKey = itemId;
-                    react = char.reactions[itemId];
-                }
-                
-                // 如果用物品ID没找到，检查是否是线索ID匹配
-                if(!react && itemObj.type === 'clue' && char.reactions && char.reactions[itemId]) {
+                if(!react && char.reactions && char.reactions[itemId]) {
                     reactionKey = itemId;
                     react = char.reactions[itemId];
                 }
@@ -2547,7 +2558,7 @@
         "ITEM_something": {
             "label": "黑影",
             "desc": "摇摇晃晃，摇摇晃晃……用手电筒照亮它能看得更清楚。",
-            "canBePicked": false,
+            "canBePicked": true,
             "presentReactions": {
                 "ITEM_shoudiantong": {
                     "text": "黑影被照亮了，一具吊死的尸体赫然出现……",
