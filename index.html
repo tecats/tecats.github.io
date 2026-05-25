@@ -2082,9 +2082,12 @@
             // 向场景物品出示物品/线索
             executePresentToSceneItem(itemObj, sceneItemObj) {
                 const itemId = itemObj.id;
+                const sceneItemId = sceneItemObj.id;
                 const sceneItem = sceneItemObj.data;
                 const sceneItemName = sceneItem.label;
+                const item = itemObj.data;
                 
+                // 情况1：检查场景物品对物品的反应
                 if(sceneItem && sceneItem.presentReactions && sceneItem.presentReactions[itemId]) {
                     const react = sceneItem.presentReactions[itemId];
                     // 场景物品反应也支持图片
@@ -2098,7 +2101,22 @@
                     );
                     if(react.results) this.applyResults(react.results);
                     return true;
-                } else {
+                } 
+                // 情况2：检查物品对场景物品的反应（双向检查）
+                else if(item && item.presentReactions && item.presentReactions[sceneItemId]) {
+                    const react = item.presentReactions[sceneItemId];
+                    this.addLog(
+                        this.processTextWithClues(react.text), 
+                        "info",
+                        {
+                            image: react.image || (item.image ? item.image : null),
+                            audio: react.audio || (item.audio ? item.audio : null)
+                        }
+                    );
+                    if(react.results) this.applyResults(react.results);
+                    return true;
+                }
+                else {
                     this.addLog(`"${sceneItemName}"没有对此物品产生反应。`, "info");
                     return true;
                 }
