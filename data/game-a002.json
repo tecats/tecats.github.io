@@ -1,0 +1,1146 @@
+{
+    "config": {
+        "startScene": "SCENE_START"
+    },
+    "scenes": {
+        "SCENE_START": {
+            "title": "T.E.C-OS",
+            "content": "你好，[item:ITEMS_cjdcy]。\n[item:ITEMS_ydqy]已被锁定。欢迎进入[item:ITEMS_tec]。\n在你的权限范围内能够进入的区域，已经向你开放。\n[char:CHARS_TEC]将协助你揭示异动区域的[item:ITEMS_turename]。\n\n接下来你将学习如何使用T.E.C-OS的指令交互：\n试试使用“查询 真名”命令看看会有什么效果？\n接着使用“捕获 [item:ITEMS_cjdcy]”，你将获得你的第一个线索。\n使用“出示 [item:ITEMS_turename] TEC”或“出示 TEC [item:ITEMS_turename]”，你将获得TEC的一些小小提示。\n可在指令交互框中输入“查询 [item:ITEM_cmd]”获得更多帮助。\n\n请务必注意安全，避免遭受因果污染。\n一切就绪后，请点击进入……[loc:SCENE_wz]……系统错误……未知……",
+            "desc": "你好，初级调查员，欢迎进入T.E.C-OS。",
+            "hiddenClue": {
+                "text": "尝到一股血腥的气味。",
+                "ids": []
+            },
+            "canBePicked": false
+        },
+        "SCENE_wz": {
+            "title": "未知地点",
+            "desc": "不知身在何处？",
+            "content": "一轮[item:ITEM_cbyg]挂在没有星辰的天空之中，大得夸张，如同一张被贴在黑色墙壁上的纸。\n这是什么地方？\n你环顾四周，空空荡荡，不知何时地上躺着一张古怪的[item:ITEM_zxtz]。\n月光之下，凭空出现的厚厚的[item:ITEM_door]突兀地立在前方，门上有一些[item:ITEMS_qghj]。\n木门的正中有两个简陋的[item:ITEMS_mk]，上面歪歪斜斜地贴着一对睁开的[item:ITEMS_eyes]。\n门扣看起来有些古怪，或许有一把[item:ITEM_shoudiantong]能够看得更清楚一些。\n\n问问[char:CHARS_TEC]",
+            "canBePicked": false
+        },
+        "SCENES_hzyl": {
+            "title": "荒宅院落",
+            "content": "月光变得暗淡。\n木门之后一处荒废的老宅院落：久无人居，[item:ITEMS_zc]疯长，几乎盖住整条小腿，有风吹过时，发出沙沙沙的响动。\n你小心翼翼向前，时不时会踢到“怪石”或散落的粗大“树枝”。\n没有完全塌毁的[item:ITEMS_jsct]，还能隐约看出一些大户人家的痕迹，如今已变得萧瑟异常。\n在院落的中心，是一棵巨大的杏花树，无从得知，它究竟在这里耸立了多久了。\n杏花还未开放，但却隐隐能够闻到花香。\n[loc:SCENES_xhsx]似乎有一个人的影子……",
+            "canBePicked": false,
+            "desc": "木门之后一处荒废的老宅院落。"
+        },
+        "SCENES_xhsx": {
+            "title": "杏花树下",
+            "content": "杏花树枝繁叶茂。\n在一条细长的树枝末端，挂着一张[item:ITEMS_bq]。树干裂开了一处，像是正在愈合的[item:ITEMS_sk]。\n月光依然黯淡，隐约可见杏花树下坐着一个身着[item:ITEMS_jzro]，人偶张开双手似乎要用力敲打什么。\n距离人偶不远处，一根[item:ITEM_bd]斜放着。\n不知为何……总觉得附近还有其他人……\n是谁？\n你看到了[item:ITEM_xhs]后的[loc:SCENES_wlro]。\n\n返回[loc:SCENES_hzyl]",
+            "desc": "这是一棵巨大的杏花树。枝繁叶茂。",
+            "canBePicked": false
+        },
+        "SCENES_xhsdm": {
+            "title": "杏花树的梦",
+            "content": "杏花树看到了自己的一场梦：\n一头羊将自己粗壮尖利的羊角插在杏花树的树干之中，数根[item:ITEMS_yj]深深没入它的身体，鲜血顺着躯体滴落在地上。\n它大口喘着气，挣扎着想要逃离，但羊角却纹丝不动，很快它就丧失了气力。\n一个[char:CHARS_cgnr]慢慢靠近，从腰间拔出一把[item:ITEMS_lr]刺向羊的心脏……\n羊的瞳孔突然瞪大，接着如同褪色一般失去了神采，而后轰然倒地。\n持弓的男人没有停止动作，他把羽箭拔出，取下[item:ITEMS_jt]，将利刃向后拉扯，划出长长的裂口，熟练的剥离[item:ITEMS_yp]……\n鲜血从[item:ITEMS_y]的腹部涌出，浸染了[loc:SCENES_xhsx]的土地……",
+            "desc": "杏花树的一场梦。",
+            "canBePicked": false,
+            "hiddenClue": {
+                "text": "",
+                "ids": []
+            }
+        },
+        "SCENES_wlro": {
+            "title": "无脸人偶",
+            "content": "那个人偶一身红色的外套。\n与这四周的景色显得格格不入。\n[item:ITEM_ro]没有[item:ITEM_wg]，却好像正在默不作声地观察着此地。\n\n返回[loc:SCENES_xhsx]",
+            "desc": "一个身穿着红色外套的无脸人偶。",
+            "canBePicked": false
+        },
+        "SCENES_ct": {
+            "title": "池塘",
+            "content": "布满绿苔的池水，发出阵阵臭味。\n你拨开绿苔，将手伸进池水之中，很快就摸到了一把[item:ITEMS_cd]，锈迹斑斑，毫无锋利可言。\n刀柄处贴着两个[item:ITEM_ed]形状的贴纸。\n\n返回[loc:SCENES_xhsx]",
+            "desc": "布满绿苔的池水，发出阵阵臭味。",
+            "canBePicked": false
+        },
+        "SCENES_cddm": {
+            "title": "长刀的记忆",
+            "content": "[item:ITEM_js]之后，架起了[item:ITEM_rl]。\n一个[item:ITEM_jsnz]手持[item:ITEM_dc]，站在铁砧旁边。\n在铁砧的一侧有一张结实的桌子，上面摆放着正圆形木模和一把[item:ITEM_xc]。\n锻打完成的铁条被放入木模之中，完成整形。\n之后再次送入炉火之中，直至铁圈被烧成暗红色。\n就在此时，精壮男子身后突然冒出一个[char:CHAR_sclr]，那把利刃割向男子的咽喉。\n男子颓然倒在水边，鲜血从他的脖颈处不断流出，他最后看到的是一片[item:ITEMS_xhct]……和放入池水之中淬火的铁圈。\n\n返回[loc:SCENES_ct]",
+            "desc": "噩梦般的记忆。",
+            "canBePicked": false
+        },
+        "SCENE_bdjy": {
+            "title": "扁担的记忆",
+            "content": "扁担看到的一段记忆：\n[item:ITEM_ptsf]就坐在[loc:SCENES_xhsx]，把手中的木料仔细雕刻成桶状，而后将桶的腰部收束匀圆。\n他仔细观察，雕琢细部，直至满意。\n片刻之后，暗影出现了……\n一把[item:ITEMS_lr]捅入男人的背部，死亡的来临就在顷刻之间，血腥的气息扑面而来。\n[char:CHAR_ay]将男人推开，自己坐了下来，用一支沾满男人鲜血的[item:ITEMS_mb]，在[item:ITEM_mt]上描绘着纹饰。\n而那个[item:ITEMS_jzro]就在暗影的身旁……\n…………\n忽然，如同屏幕突然闪过的雪花一般。\n你看到那个[loc:SCENES_wlro]不知何时，出现在了树下，它试图抢过那支毛笔……",
+            "desc": "扁担看到的一切。",
+            "canBePicked": false
+        },
+        "SCENE_jgxs": {
+            "title": "羯鼓响时",
+            "content": "[item:ITEMS_jzro]的双手有节奏地敲打着[item:ITEM_jg]，破空透远，苍凉悲怆。\n人偶的脸上逐渐浮现出五官，一双修长的眼睛紧闭着，薄薄的嘴唇微张，跟着鼓声轻轻抖动。\n鼓声愈发洪亮，节奏愈发快速。\n[item:ITEMS_zc]、怪石、树枝……随之震动。\n一根“树枝”忽然飞到人偶的手中，人偶挥动“树枝”敲击鼓面。\n满地的怪石与树枝不断旋转，狂舞，渐渐变作了一具具骷髅。\n人偶用尽全力敲向羯鼓，“树枝”瞬间断裂，裂口处发出淡淡的荧光。\n与此同时，鼓面崩裂，数十块[item:ITEM_rg]从鼓中滑落而出……一阵浓烈的[loc:SCENE_xhx]袭来。\n鼓声停歇，骷髅散落一地……院落重归寂静。\n杏花开了。",
+            "desc": "当羯鼓被奏响……",
+            "canBePicked": false
+        },
+        "SCENE_sgzz": {
+            "title": "树干之中",
+            "content": "一本[item:ITEMS_js]藏在裂缝之中。\n没有名字，没有内容。\n\n返回[loc:SCENES_xhsx]",
+            "desc": "",
+            "canBePicked": false
+        },
+        "SCENE_xhx": {
+            "title": "杏花香",
+            "content": "名为[char:CHAR_nms]的青年将手背在身后，看着[loc:SCENES_xhsx]弟弟[char:CHAR_nys]挥舞鼓槌，那如心跳般的声响，直击他的胸膛。他的内心从未如此澎湃却又宁静。\n忽然，他闻到一阵淡淡的香气扑鼻而来。\n他抬头看去，杏花树上的杏花不知何时盛开了。\n乐生似乎感应到了什么，加快了击鼓的节奏，鼓声如波涛涌来。\n木生的眼眶一热，泪水止不住流下。\n此时的乐生，竟如同杏花花瓣一般于鼓声响处起舞。\n这是他从未获得的自由的灵魂。\n乐生生平第一次露出了笑容。\n木生从背后抽出右手，抹去泪水……手掌上的鲜血染红了半张脸。\n空无一物的左手处，鲜血正滴落在地上……",
+            "desc": "惟将羯鼓催花。",
+            "canBePicked": false,
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_xhxq]",
+                "ids": [
+                    "CLUE_xhxq"
+                ]
+            }
+        },
+        "SCENE_zs": {
+            "title": "高级调查员朱穗",
+            "content": "无脸人偶渐渐显现出五官，那个人……你似曾相识。\n[char:CHAR_zs]。你想起了她的名字。\n无数的疑惑此刻闪过你的大脑，然而人偶闪动了几下，消失不见了……\n紧接着，你看到[item:ITEM_cbyg]掉了下来……\n\n返回[loc:SCENES_xhsx]",
+            "desc": "",
+            "canBePicked": false
+        }
+    },
+    "items": {
+        "ITEM_cmd": {
+            "label": "命令帮助",
+            "desc": "<br>查询 物品：通过指令查询 物品 可以查询物品的描述信息<br>\n前往 场景：有的时候场景中没有出现导航帮助你离开，你可以使用该命令自由前往任意场景<br>\n捕获 物品/角色/场景：这是一个重要命令，你可以捕获隐藏的线索，请经常使用它。<br>\n出示 物品/线索 人物/物品：这也是一个常用的命令，能够帮助你找到一些隐藏的内容，以及和一些人物和物品互动<br>以上命令 请善加利用。",
+            "canBePicked": false
+        },
+        "ITEM_shoudiantong": {
+            "label": "手电筒",
+            "desc": "还能使用的手电筒。",
+            "canBePicked": true
+        },
+        "ITEMS_tec": {
+            "label": "T.E.C-OS",
+            "desc": "异动区域调查所使用的系统，完全模拟异动区域现场环境和数据，再小的细节也能被收录其中。T.E.C-OS对于因果的介入究竟到了什么程度？目前不得而知。",
+            "canBePicked": false
+        },
+        "ITEMS_ydqy": {
+            "label": "异动区域",
+            "desc": "发生因果扰动的区域，某些特殊的存在导致了整个区域的异常。调查员的目标就是揭示特殊存在的真名，以便进行捕获。",
+            "canBePicked": false
+        },
+        "ITEMS_turename": {
+            "label": "真名",
+            "desc": "导致区域发生异动的特殊存在的真实身份。异动区域的真名是多个因果链条得以存在的关键因素。真名的捕获需要五感归因。而非真名的结果，组成方式则并不受五感归因限制。当你捕获五感线索成功，并将其归入“逻辑阵列”后，请点击右下角的“SYNC_MATRIX_INFERENCE”按钮进行推演。",
+            "canBePicked": false
+        },
+        "ITEMS_cjdcy": {
+            "label": "初级调查员",
+            "desc": "调查员分为初级、中级、高级三个等级，每一个等级能够介入的因果各有不同，获得的T.E.C-OS的权限也不同。",
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUES_cjdcy]",
+                "ids": [
+                    "CLUES_cjdcy"
+                ]
+            },
+            "canBePicked": false
+        },
+        "ITEM_zxtz": {
+            "label": "嘴型贴纸",
+            "desc": "一张奇怪的嘴。",
+            "canBePicked": true
+        },
+        "ITEM_door": {
+            "label": "木门",
+            "desc": "一扇木门突兀地出现。",
+            "commands": [
+                {
+                    "type": "useItem",
+                    "label": "黏贴",
+                    "requiredItem": "ITEM_zxtz",
+                    "successMessage": "好……疼……木门发出痛苦的呻吟。",
+                    "failMessage": "",
+                    "onSuccess": {
+                        "flags": [
+                            "door_tie"
+                        ]
+                    }
+                }
+            ],
+            "canBePicked": false
+        },
+        "ITEM_cbyg": {
+            "label": "惨白的月亮",
+            "desc": "如同一张圆形的剪纸被贴在黑色的背景上。",
+            "canBePicked": false,
+            "presentReactions": {
+                "ITEM_shoudiantong": {
+                    "text": "月亮的背后隐约可以看见几个小字：[clue:CLUES_xhpb]"
+                }
+            },
+            "commands": [
+                {
+                    "type": "useItem",
+                    "label": "黏贴嘴部",
+                    "requiredItem": "ITEM_zxtz",
+                    "successMessage": "滋滋滋滋滋滋……",
+                    "failMessage": ""
+                }
+            ]
+        },
+        "ITEM_xhs": {
+            "label": "杏花树",
+            "desc": "巨大的杏花树，无从得知它究竟在这里耸立了多久了。",
+            "canBePicked": false,
+            "presentReactions": {
+                "ITEM_shoudiantong": {
+                    "text": "树上的杏花似乎快要开了。"
+                }
+            },
+            "commands": [
+                {
+                    "type": "text",
+                    "label": "黏贴嘴部",
+                    "value": "杏花树开口说道：这些花将开未开之时，衣裳褴褛的青年男子，挑着扁担，筐里装着各式各样的工具和材料。\n小孩跟在他的身后，小心翼翼拉着他的衣角，后来他们就在这坐下了。那个小孩……不会说话、听不到声音、也看不见东西……"
+                },
+                {
+                    "type": "useItem",
+                    "label": "黏贴眼睛",
+                    "requiredItem": "ITEMS_eyes",
+                    "successMessage": "杏花树看到了自己的一场梦。",
+                    "failMessage": "",
+                    "onSuccess": {
+                        "flags": [
+                            "eyes_open"
+                        ],
+                        "scene": "SCENES_xhsdm"
+                    }
+                },
+                {
+                    "type": "text",
+                    "label": "贴上标签",
+                    "value": "标签上浮现出文字：杏花树"
+                }
+            ]
+        },
+        "ITEMS_bq": {
+            "label": "标签",
+            "desc": "一张写着什么内容的纸片。",
+            "canBePicked": true
+        },
+        "ITEMS_jzro": {
+            "label": "劲装的人偶",
+            "desc": "看不见，听不到，说不出……",
+            "canBePicked": false,
+            "presentReactions": {
+                "ITEM_jgl": {
+                    "text": "身着劲装的人偶的双手之间慢慢浮现了一只羯鼓。",
+                    "results": {
+                        "flags": [
+                            "jg_played"
+                        ],
+                        "scene": "SCENE_jgxs"
+                    }
+                }
+            },
+            "commands": [
+                {
+                    "type": "text",
+                    "label": "贴上标签",
+                    "value": "标签上浮现出文字：一个没有五官的人偶。"
+                }
+            ]
+        },
+        "ITEMS_eyes": {
+            "label": "眼睛",
+            "desc": "眼睛形状的贴纸。",
+            "canBePicked": true
+        },
+        "ITEMS_mk": {
+            "label": "门扣",
+            "desc": "圆形的门扣。",
+            "canBePicked": false,
+            "presentReactions": {
+                "ITEM_shoudiantong": {
+                    "text": "手电筒直射向眼睛贴纸，眼睛眨了几下，大门随着打开。",
+                    "results": {
+                        "scene": "SCENES_hzyl"
+                    }
+                }
+            }
+        },
+        "ITEMS_qghj": {
+            "label": "奇怪的痕迹",
+            "desc": "数十条杂乱的抓痕遍布木门。",
+            "canBePicked": false
+        },
+        "ITEMS_sk": {
+            "label": "伤口",
+            "desc": "杏花树树干上的一道裂口，里面似乎藏着什么，使用利刃可以将其割开。",
+            "presentReactions": {
+                "ITEMS_lr": {
+                    "text": "利刃割开了杏花树树干上的裂口。",
+                    "results": {
+                        "scene": "SCENE_sgzz"
+                    }
+                }
+            },
+            "canBePicked": false
+        },
+        "ITEMS_y": {
+            "label": "羊",
+            "desc": "被猎杀的羊。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "useItem",
+                    "label": "黏贴眼睛",
+                    "requiredItem": "ITEMS_eyes",
+                    "successMessage": "羊逐渐模糊的双眼看到手持弓箭的人浑身是血地站了起来，朝着池塘走去……",
+                    "failMessage": ""
+                },
+                {
+                    "type": "conditional",
+                    "label": "贴上标签",
+                    "successMessage": "",
+                    "conditions": [
+                        {
+                            "clue": "CLUE_nms",
+                            "failMessage": "身份未明。"
+                        }
+                    ],
+                    "onSuccess": {
+                        "message": "南木生的实验体。"
+                    }
+                }
+            ]
+        },
+        "ITEMS_cd": {
+            "label": "长刀",
+            "desc": "锈迹斑斑的长刀，不知在池底躺了多久。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "useItem",
+                    "label": "黏贴嘴部",
+                    "requiredItem": "ITEM_zxtz",
+                    "successMessage": "我杀生太多，唯有沉入池底，才是我的归宿。",
+                    "failMessage": ""
+                },
+                {
+                    "type": "useItem",
+                    "label": "黏贴眼睛",
+                    "requiredItem": "ITEMS_eyes",
+                    "successMessage": "长刀的眼睛看向假山。",
+                    "failMessage": "",
+                    "onSuccess": {
+                        "scene": "SCENES_cddm"
+                    }
+                }
+            ]
+        },
+        "ITEMS_yj": {
+            "label": "羽箭",
+            "desc": "射出的箭扎进了羊的身体。",
+            "canBePicked": true
+        },
+        "ITEMS_js": {
+            "label": "旧书",
+            "desc": "一本空白的旧书，或许能用毛笔写上点什么？",
+            "canBePicked": true,
+            "commands": [
+                {
+                    "type": "conditional",
+                    "label": "写字",
+                    "successMessage": "毛笔沾满了血。",
+                    "conditions": [
+                        {
+                            "flag": "pen_ok",
+                            "failMessage": "毛笔上没有墨水了。"
+                        },
+                        {
+                            "clue": "CLUES_juan",
+                            "failMessage": "缺少用精铁打造的东西。"
+                        },
+                        {
+                            "clue": "CLUE_gs",
+                            "failMessage": "某种韧性十足的木头。"
+                        },
+                        {
+                            "clue": "CLUE_wljs",
+                            "failMessage": "需要上好的皮。"
+                        }
+                    ],
+                    "onSuccess": {
+                        "message": "旧书上的书名逐渐显现：[clue:DATA_jgl]",
+                        "items": [
+                            "ITEM_jgl"
+                        ]
+                    }
+                }
+            ]
+        },
+        "ITEMS_xhct": {
+            "label": "血红的池塘",
+            "desc": "血红的池塘",
+            "canBePicked": false,
+            "presentReactions": {
+                "ITEMS_mb": {
+                    "text": "毛笔上吸满了鲜血。",
+                    "results": {
+                        "flags": [
+                            "pen_ok"
+                        ]
+                    }
+                }
+            }
+        },
+        "ITEMS_jsct": {
+            "label": "假山与池塘",
+            "desc": "高约两米的假山立在庭院的角落，在加上的正前方是一池水塘，久未打理，长满了绿色的水苔。总觉得似乎隐藏了很多秘密。",
+            "canBePicked": false
+        },
+        "ITEMS_lr": {
+            "label": "利刃",
+            "desc": "锋利无比，可以轻易割开物品。",
+            "canBePicked": true,
+            "commands": [
+                {
+                    "type": "text",
+                    "label": "贴上标签",
+                    "value": "标签上浮现出文字：一把长刀。"
+                }
+            ]
+        },
+        "ITEMS_zc": {
+            "label": "杂草",
+            "desc": "疯长的杂草，风吹过发出沙沙的声响。",
+            "commands": [
+                {
+                    "type": "conditional",
+                    "label": "仔细聆听",
+                    "successMessage": "",
+                    "conditions": [
+                        {
+                            "flag": "mt_talked",
+                            "failMessage": "被风吹动的沙沙声。"
+                        },
+                        {
+                            "flag": "jg_played",
+                            "failMessage": "被风吹动的沙沙声。"
+                        }
+                    ],
+                    "onSuccess": {
+                        "message": "那些沙沙的响动，伴随着有节奏的羯鼓声，变为了歌谣：[clue:CLUE_jxc]"
+                    }
+                },
+                {
+                    "type": "text",
+                    "label": "黏贴嘴部",
+                    "value": "杏花树，花未开，\n羯羊不见旧时月。\n桶身圆，漆色红，\n哥哥一去无影踪。\n炉火旺，池水绿，\n锻声沉在水波中。"
+                }
+            ],
+            "canBePicked": false
+        },
+        "ITEMS_jt": {
+            "label": "箭头",
+            "desc": "铁制的箭头，韧性十足，极为致命。",
+            "canBePicked": true
+        },
+        "ITEMS_yp": {
+            "label": "羊皮",
+            "desc": "被剥离后的整张羊皮。",
+            "canBePicked": true,
+            "hiddenClue": {
+                "text": "触摸之后是一种[clue:CLUE_wljs]。",
+                "ids": [
+                    "CLUE_wljs"
+                ]
+            }
+        },
+        "ITEM_rl": {
+            "label": "熔炉",
+            "desc": "炉火正旺，可放入铁器灼烧。",
+            "canBePicked": false,
+            "presentReactions": {
+                "ITEMS_jt": {
+                    "text": "铁制的箭头被放入熔炉之中，而后被取出锻打成扁铁条。",
+                    "results": {
+                        "items": [
+                            "ITEM_btt"
+                        ]
+                    }
+                }
+            },
+            "commands": [
+                {
+                    "type": "text",
+                    "label": "贴上标签",
+                    "value": "如果放入铁制的物品就会有所得。"
+                }
+            ]
+        },
+        "ITEM_btt": {
+            "label": "扁铁条",
+            "desc": "扁铁条",
+            "canBePicked": true
+        },
+        "ITEM_wg": {
+            "label": "五官",
+            "desc": "原本该有五官的地方，空空荡荡……",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "conditional",
+                    "label": "查看",
+                    "successMessage": "",
+                    "conditions": [
+                        {
+                            "flag": "pen_ok",
+                            "failMessage": "空无一物"
+                        }
+                    ],
+                    "onSuccess": {
+                        "message": "用[clue:CLUES_rwg]出现在人偶的脸上，鲜艳而又诡异。"
+                    }
+                }
+            ]
+        },
+        "ITEM_ro": {
+            "label": "人偶",
+            "desc": "无脸的人偶，仿佛在观察着什么。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "conditional",
+                    "label": "贴上标签",
+                    "successMessage": "",
+                    "conditions": [
+                        {
+                            "clue": "CLUES_rwg",
+                            "failMessage": "标签上一片空白。"
+                        }
+                    ],
+                    "onSuccess": {
+                        "message": "一行红色的小字慢慢在标签上显现……",
+                        "gotoScene": "SCENE_zs"
+                    }
+                }
+            ]
+        },
+        "ITEM_js": {
+            "label": "假山",
+            "desc": "光秃秃的假山。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "useItem",
+                    "label": "黏贴嘴部",
+                    "requiredItem": "ITEM_zxtz",
+                    "successMessage": "假山没有说话，但吐出了一张纸。",
+                    "failMessage": "",
+                    "onSuccess": {
+                        "items": [
+                            "ITEM_paper"
+                        ]
+                    }
+                }
+            ]
+        },
+        "ITEM_paper": {
+            "label": "一张纸",
+            "desc": "\n备料精炼：铁料烧锻，打成匀厚扁铁条。\n一火弯弧：整料烧红，三十大锤，弯成大半圆。\n二火校圆：整圈复烧，百二小锤，修正正圆。\n入水淬火得之。",
+            "canBePicked": true,
+            "hiddenClue": {
+                "text": "纸的背面写着：[clue:CLUES_xjbh]",
+                "ids": [
+                    "CLUES_xjbh"
+                ]
+            }
+        },
+        "ITEM_dc": {
+            "label": "大锤",
+            "desc": "锻铁所用大锤。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "password",
+                    "label": "锻打",
+                    "title": "锻打扁铁条",
+                    "prompt": "你要锻打几次？",
+                    "requiredItem": "ITEM_btt",
+                    "value": "30",
+                    "onSuccess": {
+                        "message": "烧红的扁铁条被弯成大半圆。",
+                        "items": [
+                            "ITEM_dby"
+                        ]
+                    }
+                }
+            ]
+        },
+        "ITEM_xc": {
+            "label": "小锤",
+            "desc": "整形所用小锤。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "password",
+                    "label": "整形",
+                    "title": "半圆整形",
+                    "prompt": "整形几次？",
+                    "value": "120",
+                    "onSuccess": {
+                        "message": "一百二十次锤击，得到一个正圆。",
+                        "items": [
+                            "ITEM_yxtq"
+                        ]
+                    }
+                }
+            ]
+        },
+        "ITEM_yxtq": {
+            "label": "圆形铁圈",
+            "desc": "放入池中淬火的圆形铁圈。",
+            "canBePicked": true,
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUES_juan]",
+                "ids": [
+                    "CLUES_juan"
+                ]
+            }
+        },
+        "ITEM_ed": {
+            "label": "耳朵",
+            "desc": "耳朵形状的贴纸。",
+            "canBePicked": true
+        },
+        "ITEM_jgl": {
+            "label": "羯鼓录",
+            "desc": "一本旧书《羯鼓录》：……鸡娄鼓之上，𣞙如漆桶，山桑木为之。下有小牙床承之，击用两杖，其声焦杀鸣烈，尤宜促曲急破，战杖连碎之声，又宜高楼晚景，明月清风，破一作凌。空透远，特异众乐……那个身着劲装的人偶似乎就在等着此书……",
+            "canBePicked": true
+        },
+        "ITEM_mt": {
+            "label": "木桶",
+            "desc": "摆放在杏花树下的精美木桶，描绘着红色的纹饰。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "useItem",
+                    "label": "黏贴耳朵",
+                    "requiredItem": "ITEM_ed",
+                    "successMessage": "院落的那片杂草似乎传来了别样的声音。",
+                    "failMessage": "",
+                    "onSuccess": {
+                        "flags": [
+                            "mt_talked"
+                        ]
+                    }
+                },
+                {
+                    "type": "useItem",
+                    "label": "黏贴嘴部",
+                    "requiredItem": "ITEM_zxtz",
+                    "successMessage": "尝到了一股[clue:CLUE_tx]。",
+                    "failMessage": ""
+                }
+            ],
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_gs]",
+                "ids": [
+                    "CLUE_gs"
+                ]
+            }
+        },
+        "ITEM_bd": {
+            "label": "扁担",
+            "desc": "一根扁担靠在杏花树旁。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "text",
+                    "label": "黏贴嘴部",
+                    "value": "扁担说道：我来讲一个故事。有兄弟两人，一大一小不知走了多少路，才到了这杏花树下。这一路上，靠着弟弟演奏乐器为生，而兄长则每天忙着照顾弟弟，修复乐器。\n这弟弟天赋异禀，但难就难在，他看不见，听不到，也说不出。看看，就像树下的那个人偶一样。"
+                },
+                {
+                    "type": "useItem",
+                    "label": "黏贴眼睛",
+                    "requiredItem": "ITEMS_eyes",
+                    "successMessage": "",
+                    "failMessage": "",
+                    "onSuccess": {
+                        "scene": "SCENE_bdjy"
+                    }
+                }
+            ]
+        },
+        "ITEM_dby": {
+            "label": "大半圆",
+            "desc": "锻打而成的大半圆。",
+            "canBePicked": true
+        },
+        "ITEMS_mb": {
+            "label": "毛笔",
+            "desc": "一把毛笔。",
+            "canBePicked": true
+        },
+        "ITEM_jg": {
+            "label": "羯鼓",
+            "desc": "羯鼓。",
+            "canBePicked": true,
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_jg]",
+                "ids": [
+                    "CLUE_jg"
+                ]
+            }
+        },
+        "ITEM_zzxx": {
+            "label": "制作信息",
+            "desc": "\n败鼓与红裳女子的灵感来源：\n常德有士人，客滇中归。一仆负担以从。一日向夕，不及旅店，过一小村，向村人假宿。村人曰：“此地他无馆舍，惟一古庙，然素有妖怪杀人，不敢宿客。”士人度日暮途远，不得已，乃曰：“吾不畏。”乞以一几一灯，为达旦之备。村人与之。士人入庙，下榻一室，命仆宿其耳房。因张灯读书，并取行箧中朱笔砚，陈于几。澄心息虑，以待其变。\n二更之后，仆已熟睡。有红裳女子，年可十八九，婀娜而来，顾之而笑。士人揣知妖魅，殊不顾。女乃延伫而歌曰：\n“昔伴笙歌队，今居土木旁。铜丸埋汉殿，谁是定陶王”\n低昂断续，音节颇妙。既毕，笑曰：“郎识之乎”士人答言不识。因复少近，曰：“更有新歌，敢献于君子乎”士人曰：“第歌之。”女乃拂袖搴裳，斜眸欹足，缓声而歌。柔曼缠绵，夭媚百出。\n其一章曰：\n白月尘生暗铁星，漆床孤卧夜冥冥。都昙答腊无消息，肠断花奴空泪零。\n二章云：\n闻道萧郎爱细腰，齐娘薛姊颤声娇。自怜不及双飞鹭，犹伴行人宿丽谯。\n歇罢，立近几旁，含情欲发。士人取笔濡朱，戏书其颊。女大惊，失声而走，遂不复至。\n次日，以状告村人。令穷其迹。遍索庙中。见殿角一败鼓朱书宛然，遂破之，得血数升及人骨若干。魅遂绝。\n——《耳食录卷二：红裳女子》\n\n羯鼓的灵感来源：\n羯鼓，出外夷乐，以戎羯之鼓，故曰羯鼓。其音主太簇，一均，一作云。龟兹部、高昌部、疏勒部、天竺部皆用之。次在都昙鼓、答腊鼓之下，都昙鼓似带鼓而小，答腊。者，即指鼓也。鸡娄鼓之上，𣞙如漆桶，山桑木为之。下有小牙床承之，击用两杖，其声焦杀鸣烈，尤宜促曲急破，战杖连碎之声，又宜高楼晚景，明月清风，破一作凌。空透远，特异众乐。杖用黄栌、一作檀。狗骨、花楸等木，须至乾紧，绝湿气而复柔腻。乾取发越响亮，腻取战𬡇健举。棬用刚铁，铁当精炼，棬当至匀，若不刚，即应绦高下𫼝捩不停，不匀，即鼓面缓急，若琴徽之㪇病矣。\n——《羯鼓录》\n\n羯鼓催花灵感来源：\n……尝遇二月初诘旦，巾栉方毕，时当宿雨初晴，景物一作色。明丽，小殿内庭，柳杏将吐，睹而叹曰：对此景物，岂得不与他判断之乎？左右相目，将命备酒，独高力士遣取羯鼓，上旋命之，临轩纵击一曲。曲名春光好，自制者也。神思自得。及顾，柳杏皆已发拆，上指而笑，谓嫔御曰：此一事不唤我作天公，可乎？嫔御侍官皆呼万岁。\n——《羯鼓录》\n\n《劲草行》全文：\n中原地古多劲草，节如箭竹花如稻。\n白露洒叶珠离离，十月霜风吹不到。\n萋萋不到王孙门，青青不盖谗佞坟。\n游根直下土百尺，枯荣暗抱忠臣魂。\n我问忠臣为何死，元是汉家不降士。\n白骨沉埋战血深，翠光潋滟腥风起。\n山南雨晴蝴蝶飞，山北雨冷麒麟悲。\n寸心摇摇为谁道，道旁可许愁人知？\n昨夜东风鸣羯鼓，髑髅起作摇头舞。\n寸田尺宅且勿论，金马铜驼泪如雨。\n——元 王冕",
+            "canBePicked": false
+        },
+        "ITEM_rg": {
+            "label": "人骨",
+            "desc": "森森白骨，异香扑鼻。",
+            "canBePicked": true,
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_rgx]",
+                "ids": [
+                    "CLUE_rgx"
+                ]
+            }
+        },
+        "ITEM_ptsf": {
+            "label": "披头散发的男人",
+            "desc": "披头散发的男人。",
+            "canBePicked": false,
+            "commands": [
+                {
+                    "type": "conditional",
+                    "label": "贴上标签",
+                    "successMessage": "",
+                    "conditions": [
+                        {
+                            "clue": "CLUE_nms",
+                            "failMessage": "身份未明。"
+                        }
+                    ],
+                    "onSuccess": {
+                        "message": "南木生的实验体。"
+                    }
+                }
+            ]
+        },
+        "ITEM_jsnz": {
+            "label": "精瘦的男子",
+            "desc": "精瘦的男子。",
+            "commands": [
+                {
+                    "type": "conditional",
+                    "label": "贴上标签",
+                    "successMessage": "",
+                    "conditions": [
+                        {
+                            "clue": "CLUE_nms",
+                            "failMessage": "身份未明。"
+                        }
+                    ],
+                    "onSuccess": {
+                        "message": "南木生的实验体。"
+                    }
+                }
+            ],
+            "canBePicked": false
+        }
+    },
+    "chars": {
+        "CHARS_TEC": {
+            "name": "TEC",
+            "desc": "您忠实的AI助手！",
+            "talkQueue": [
+                {
+                    "text": "我是您忠实的AI助手！祝您捕获顺利！"
+                }
+            ],
+            "defaultTalks": [
+                {
+                    "text": "我是您忠实的AI助手！祝您捕获顺利！"
+                }
+            ],
+            "lines": [
+                {
+                    "text": "我是您忠实的AI助手！祝您捕获顺利！"
+                }
+            ],
+            "sceneTalks": {
+                "SCENE_wz": [
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "断线重连中……"
+                    },
+                    {
+                        "text": "[clue:CLUE_xhzq]"
+                    }
+                ]
+            },
+            "avatar": "images/avatar_CHARS_TEC.png",
+            "reactions": {
+                "CLUES_zs": {
+                    "text": "重连成功……发现因果叠加……发现高级调查员……位置锁定……失败……失败……调查员已逃逸……"
+                }
+            },
+            "logicResponse": {
+                "CLUES_zs": {
+                    "text": "重连成功……发现因果叠加……发现高级调查员……位置锁定……失败……失败……调查员已逃逸……"
+                }
+            }
+        },
+        "CHARS_cgnr": {
+            "name": "持弓的男人",
+            "desc": "猎杀羊的持弓男人。",
+            "talkQueue": [],
+            "lines": [],
+            "defaultTalks": [],
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_cgnr]",
+                "ids": [
+                    "CLUE_cgnr"
+                ]
+            },
+            "sceneTalks": {
+                "SCENES_xhsdm": [
+                    {
+                        "text": "上好的皮才能做出上好的东西。"
+                    }
+                ]
+            },
+            "reactions": {
+                "CLUE_nms": {
+                    "text": "南木生，这是我的名字。"
+                }
+            },
+            "logicResponse": {
+                "CLUE_nms": {
+                    "text": "南木生，这是我的名字。"
+                }
+            },
+            "avatar": "images\\gong.png"
+        },
+        "CHAR_zs": {
+            "name": "朱穗",
+            "desc": "TEC高级调查员朱穗。",
+            "talkQueue": [],
+            "defaultTalks": [],
+            "lines": [],
+            "sceneTalks": {
+                "SCENE_zs": [
+                    {
+                        "text": "新来的，你也许一开始就应该用手电筒照照那个奇怪的月亮。"
+                    }
+                ]
+            },
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUES_zs]，在她消失的瞬间，某样东西掉落在地上——[clue:CLUE_xhzq]",
+                "ids": [
+                    "CLUES_zs",
+                    "CLUE_xhzq"
+                ]
+            },
+            "avatar": "images\\avatar_CHARS_zs.png"
+        },
+        "CHAR_sclr": {
+            "name": "手持利刃的人影",
+            "desc": "手持利刃的人影。",
+            "talkQueue": [],
+            "defaultTalks": [],
+            "lines": [],
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_sclr]",
+                "ids": [
+                    "CLUE_sclr"
+                ]
+            },
+            "sceneTalks": {
+                "SCENES_cddm": [
+                    {
+                        "text": "淬火之后所得的圆形铁圈，必须刚硬均匀。"
+                    }
+                ]
+            },
+            "reactions": {
+                "CLUE_nms": {
+                    "text": "南木生，这是我的名字。"
+                }
+            },
+            "logicResponse": {
+                "CLUE_nms": {
+                    "text": "南木生，这是我的名字。"
+                }
+            },
+            "avatar": "images\\ren.png"
+        },
+        "CHAR_ay": {
+            "name": "暗影",
+            "desc": "杏花树下的暗影。",
+            "talkQueue": [],
+            "defaultTalks": [],
+            "lines": [],
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_ay]",
+                "ids": [
+                    "CLUE_ay"
+                ]
+            },
+            "sceneTalks": {
+                "SCENE_bdjy": [
+                    {
+                        "text": "尺寸得当，雕刻均匀，纹饰独特的桶，乃是关键。"
+                    }
+                ]
+            },
+            "reactions": {
+                "CLUE_nms": {
+                    "text": "南木生，这是我的名字。"
+                }
+            },
+            "logicResponse": {
+                "CLUE_nms": {
+                    "text": "南木生，这是我的名字。"
+                }
+            },
+            "avatar": "images\\an.png"
+        },
+        "CHAR_nms": {
+            "name": "南木生",
+            "desc": "哥哥南木生",
+            "talkQueue": [],
+            "defaultTalks": [],
+            "lines": [],
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_nms]",
+                "ids": [
+                    "CLUE_nms"
+                ]
+            },
+            "sceneTalks": {
+                "SCENE_xhx": [
+                    {
+                        "text": "即便痛入骨髓，也是值得的。"
+                    }
+                ]
+            },
+            "avatar": "images\\mu.png"
+        },
+        "CHAR_nys": {
+            "name": "南乐生",
+            "desc": "弟弟南乐生。",
+            "talkQueue": [],
+            "defaultTalks": [],
+            "lines": [],
+            "hiddenClue": {
+                "text": "获得线索：[clue:CLUE_nys]",
+                "ids": [
+                    "CLUE_nys"
+                ]
+            },
+            "avatar": "images\\le.png",
+            "sceneTalks": {
+                "SCENE_xhx": [
+                    {
+                        "text": "听不见、看不到、说不出，但有鼓应该就够了，这震动几乎与心跳同频。"
+                    }
+                ]
+            }
+        }
+    },
+    "clues": {
+        "CLUES_zs": {
+            "label": "朱穗",
+            "type": "vision",
+            "desc": "高级调查员"
+        },
+        "CLUES_cjdcy": {
+            "label": "初级调查员",
+            "type": "vision",
+            "desc": "初级调查员"
+        },
+        "CLUES_xhpb": {
+            "label": "信号屏蔽装置",
+            "type": "vision",
+            "desc": "信号屏蔽装置"
+        },
+        "DATA_jgl": {
+            "label": "羯鼓录",
+            "type": "vision",
+            "desc": "《羯鼓录》唐婺州剌史南卓撰。"
+        },
+        "CLUES_juan": {
+            "label": "棬",
+            "type": "vision",
+            "desc": "由精炼精炼硬铁，厚薄宽窄均匀的正圆形圈体。"
+        },
+        "CLUES_rwg": {
+            "label": "毛笔描绘的五官",
+            "type": "vision",
+            "desc": "用毛笔描绘的五官出现在无脸人偶的脸上。"
+        },
+        "CLUES_xjbh": {
+            "label": "献祭捕获",
+            "type": "vision",
+            "desc": "纸上写着四个字：献祭捕获"
+        },
+        "CLUE_cgnr": {
+            "label": "持弓的男人",
+            "type": "vision",
+            "desc": "手持弓箭的男人。"
+        },
+        "CLUE_xhzq": {
+            "label": "信号增强装置",
+            "type": "vision",
+            "desc": "信号增强装置"
+        },
+        "CLUE_jxc": {
+            "label": "劲草行",
+            "type": "hearing",
+            "desc": "昨夜东风鸣羯鼓，髑髅起作摇头舞。"
+        },
+        "CLUE_tx": {
+            "label": "铁锈的味道",
+            "type": "taste",
+            "desc": "铁锈的味道"
+        },
+        "CLUE_gs": {
+            "label": "山桑木",
+            "type": "vision",
+            "desc": "摆放在杏花树下的山桑木木桶，描绘着红色的纹饰。"
+        },
+        "CLUE_xhxq": {
+            "label": "杏花香",
+            "type": "smell",
+            "desc": "杏花的香气。"
+        },
+        "CLUE_wljs": {
+            "label": "微凉紧实的皮",
+            "type": "touch",
+            "desc": "微凉紧实的皮。"
+        },
+        "CLUE_jg": {
+            "label": "羯鼓",
+            "type": "vision",
+            "desc": "羯鼓"
+        },
+        "CLUE_ay": {
+            "label": "暗影",
+            "type": "vision",
+            "desc": "杏花树下的暗影。"
+        },
+        "CLUE_sclr": {
+            "label": "手持利刃的人影",
+            "type": "vision",
+            "desc": "手持利刃的人影。"
+        },
+        "CLUE_nms": {
+            "label": "南木生",
+            "type": "vision",
+            "desc": "哥哥南木生。"
+        },
+        "CLUE_nys": {
+            "label": "南乐生",
+            "type": "vision",
+            "desc": "弟弟南乐生。"
+        },
+        "CLUE_rgx": {
+            "label": "人骨香",
+            "type": "smell",
+            "desc": "骨有异香。"
+        }
+    },
+    "endings": [
+        {
+            "id": "END_NORMAL",
+            "name": "不要开门！",
+            "recipe": [
+                "CLUE_xhzq",
+                "CLUES_xhpb"
+            ],
+            "isTrueCapture": false,
+            "message": "短暂离线的TEC重新连接成功。\n“不要开门！”TEC警告道。它快速扫描了一遍眼前的木门，说出了一个你从未听过的名词：因果叠加。\n“你的权限还不够。”TEC说道，“请迅速离开。”\n一道封锁线突然出现在木门前，你下意识地向后倒退了几步。\nTEC催促着你尽快离开。\n在你转身之际，你重又看向那扇门，满身伤痕的木门依然在痛苦呻吟着：好痛……好痛……"
+        },
+        {
+            "id": "TRUE_E",
+            "name": "真名捕获：败鼓",
+            "truename": "败鼓",
+            "recipe": [
+                "CLUE_rgx",
+                "CLUE_tx",
+                "CLUE_gs",
+                "CLUE_wljs",
+                "CLUE_jxc"
+            ],
+            "isTrueCapture": true,
+            "lines": [
+                {
+                    "text": "以血肉之躯打造非人间之物。",
+                    "delay": 500
+                },
+                {
+                    "text": "所失所得皆所执所念。",
+                    "delay": 1500
+                },
+                {
+                    "text": "于人骨香处重塑因果。",
+                    "delay": 2500
+                },
+                {
+                    "text": "真名得以捕获。",
+                    "delay": 3500
+                }
+            ],
+            "message": "超凡的技艺往往需要匹配超凡的器具。然而所有的获得必须匹配对等的代价。\n名为败鼓的真名，正是为此而存在。南乐生付出了失去感官的代价，得以掌握出神入化的羯鼓绝技。而南木生则需要付出足够的祭品才能制作出与弟弟的演奏技艺匹配的器具。\n于是献祭与捕获的规则再次出现。\n以鲜血绘制羯鼓鼓身的图案，加上紧实微凉的皮质鼓面，配合散发着杏花香的人骨制成的鼓槌……不，人骨制成的鼓槌过于脆弱，不堪长期使用。\n……南木生心中早已知晓答案……\n"
+        },
+        {
+            "id": "END_red",
+            "name": "红裳女子",
+            "recipe": [
+                "CLUES_zs",
+                "CLUES_rwg"
+            ],
+            "message": "随着对因果链条的不断探寻，以及过深的介入。\n高级调查员最终会陷入名为“因果叠加”的状态，调查员们将被困在混乱的因果链条之中，只有不断逃离，才能避免陷入最终的疯狂。\n所以请务必听从TEC的指令，避免因果叠加。\n然而，名为“朱穗”的高级调查员，似乎正在尝试让TEC与调查员隔离。\n她究竟有什么目的？"
+        },
+        {
+            "id": "END_xhks",
+            "name": "杏花开时",
+            "recipe": [
+                "CLUE_nms",
+                "CLUE_nys",
+                "CLUE_jg",
+                "CLUE_xhxq"
+            ],
+            "message": "南乐生超凡的羯鼓演奏技巧很快就广为人知，坊间传闻南乐生的鼓声能催开花朵。\n而南乐生也只在每年杏花将开时表演。\n人人都想一睹天才鼓手的风姿，演奏会一票难求。\n南木生制作的羯鼓极为畅销，据说由他亲手制作的鼓会散发一股杏花的香味，久久不散。\n很快，他们买下了杏花树附近的土地，建起了庭院小楼。闲时，兄弟二人就在杏花树下饮茶。\n木生看着乐生，两人时不时露出微笑。"
+        },
+        {
+            "id": "END_xjbh",
+            "name": "献祭与捕获",
+            "recipe": [
+                "CLUES_xjbh",
+                "CLUE_nms"
+            ],
+            "message": "为了所爱之人，一个人究竟会做到何种程度？\n南木生此生最大的痛苦就是无法为弟弟南乐生提供足够好的羯鼓。他想尽办法学会了制作羯鼓，但离他想要的完美依然差距巨大，他知道他制作的羯鼓根本配不上弟弟的技艺。\n直到……某人交给他一本古老的书籍，以及一瓶神秘的药剂。书籍中记载了，南木生闻所未闻的邪恶工艺：如何去皮，如何制作人骨香，如何用鲜血绘制纹饰……如是种种，令人心惊肉跳。而那瓶神秘的药剂，似乎可以让死者复生——并非复生这么简单，而是不断诞生新的个体。\n南木生深知如果按书中记载行事，必将付出极为惨痛的代价，然而，他非做不可……于是，南木生以自己为实验品，不断复制个体，又不断杀死自己的实验体，以血肉制作完美的羯鼓。\n到了后来，他已经分不清楚究竟是谁杀了谁……\n但这一切已经不重要了，因为当南乐生敲击着用他的血肉制成的羯鼓时，那种前所未有的冲击，让他忘却了一切。\n只是在一个无风的傍晚，杏花树下，当南木生再次举起利刃割向实验体的咽喉时，坐在一旁看不见听不到说不出的南乐生忽然伸出手，按住了那把利刃……而杏花也在此时绽放。"
+        }
+    ]
+}

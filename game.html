@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>T.E.C-OS v5.0.0 - 异动区域已被锁定</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        #boot-overlay {
+            background: #f6f8fa;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        #boot-title {
+            letter-spacing: 6px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #0969da;
+            margin-bottom: 16px;
+        }
+
+        .boot-btn {
+            background: #0969da;
+            border: none;
+            color: #ffffff;
+            padding: 14px 40px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            min-width: 220px;
+        }
+
+        .boot-btn:hover {
+            background: #0550ae;
+            box-shadow: 0 2px 8px rgba(9, 105, 218, 0.3);
+        }
+
+        .boot-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div id="boot-overlay" class="overlay">
+        <div id="boot-title">T.E.C-OS [LOADING...]</div>
+        <div style="font-size: 13px; margin: 16px 0; color: #666; letter-spacing: 2px;">异动区域已被锁定 // 因果重建已完成 // 权限等级已确认</div>
+        <div id="loading-status" style="margin: 16px 0; color: #999; font-size: 12px;">正在初始化系统组件...</div>
+        <button class="boot-btn" style="display: none;" id="connect-btn" onclick="Engine && Engine.startGame()">接入因果核心</button>
+        <button class="boot-btn" style="display: none; margin-top: 12px;" id="clear-btn" onclick="Engine && Engine.confirmClearSave()">清除存档</button>
+        <button class="boot-btn" style="display: none; margin-top: 12px;" id="back-btn" onclick="location.href='cases.html'">返回档案库</button>
+    </div>
+
+    <div id="ui-modal" class="modal">
+        <div id="modal-title" style="color:#cf222e; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid #e8eaed; padding-bottom: 8px;">SYSTEM_PROMPT</div>
+        <div id="modal-body" style="font-size: 15px; margin-bottom: 20px; line-height: 1.6; color: #24292f;"></div>
+        <div id="modal-input-container"></div>
+        <div style="display:flex; justify-content: flex-end; gap: 12px;">
+            <button class="boot-btn" id="modal-cancel" onclick="Engine.closeModal()">CLOSE</button>
+            <button class="boot-btn" id="modal-confirm">CONFIRM</button>
+        </div>
+    </div>
+
+    <div id="context-menu"></div>
+
+    <div id="capture-overlay" class="overlay">
+        <div id="capture-content" style="width: 100%; display: flex; flex-direction: column; align-items: center; min-height: 100%;">
+            <div id="status-line" style="color: #0891b2; font-size: 10px; margin-bottom: 30px; letter-spacing: 8px;">[ CAUSALITY_ANCHOR_ESTABLISHED // DATA_OVERFLOW ]</div>
+            
+            <div id="truename-block" style="display:none; flex-direction: column; align-items: center;">
+                <div class="truename-identified-label">真名已识别</div>
+                <h2 class="truename-title" id="truename-title">『』</h2>
+            </div>
+
+            <div id="story-container"></div>
+
+            <div id="capture-actions" style="margin-top:40px; opacity:0; transition: 3s; display: flex; flex-direction: column; align-items: center; width: 100%; padding-bottom: 50px;">
+                <div id="disconnect-notice" style="display: none; text-align: center;">
+                    <div class="disconnect-text">调查员已断开连接</div>
+                    <button class="boot-btn" style="padding: 12px 40px; border-color: #e8eaed; color: #656d76; letter-spacing: 4px; font-size: 13px; cursor: pointer; background: #ffffff;" onclick="location.reload()">断线重连 (RECONNECT)</button>
+                </div>
+                <button id="final-capture-btn" class="reboot-btn-red" onclick="Engine && Engine.performFinalCapture()">确认捕获 (CAPTURE)</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-system" data-tab="scene">
+        <nav class="mobile-tab-nav" role="tablist" aria-label="移动端标签导航">
+            <button class="mobile-tab-btn active" data-tab="scene" role="tab" aria-selected="true" aria-controls="scene-panel">场景</button>
+            <button class="mobile-tab-btn" data-tab="matrix" role="tab" aria-selected="false" aria-controls="logic-panel">矩阵</button>
+            <button class="mobile-tab-btn" data-tab="truth" role="tab" aria-selected="false" aria-controls="entity-panel">因果</button>
+        </nav>
+
+        <header>
+            <div id="loc-tag">SCANNER // LOCALHOST</div>
+            <div id="progress-tag">SYNC: 0.00%</div>
+            <div id="os-time">00:00:00</div>
+        </header>
+
+        <div class="panel" id="scene-panel">
+            <div class="panel-title">
+                <span>SCENE_FEED (视域终端)</span>
+                <button class="btn-view-toggle" onclick="Engine && Engine.togglePureView()">[ EYE_LOOK // 独占视域 ]</button>
+            </div>
+            <div class="scene-container" id="sceneContainer">
+                <div class="scene-bg-artwork" id="sceneBgArtwork"></div>
+                <div class="disco-story-overlay">
+                    <div class="disco-scroll-area" id="text-scene"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" id="monitor-panel">
+            <div class="panel-title">SYS_LOGS (因果追踪)</div>
+            <div id="log-container"></div>
+        </div>
+
+        <div class="panel" id="entity-panel">
+            <div class="panel-title">DATA_NODES (逻辑节点库)</div>
+            <div id="clues-list"></div>
+            <div class="panel-title">ACHIEVED_TRUTH (已解析因果)</div>
+            <div id="endings-history"></div>
+        </div>
+
+        <div class="panel" id="logic-panel">
+            <div class="panel-title">INFERENCE_MATRIX (逻辑阵列)</div>
+            <div class="matrix-container">
+                <div class="slot" data-type="vision"><span class="slot-label">视觉 (V)</span><div class="slot-content" id="slot-vision"></div></div>
+                <div class="slot" data-type="hearing"><span class="slot-label">听觉 (H)</span><div class="slot-content" id="slot-hearing"></div></div>
+                <div class="slot" data-type="touch"><span class="slot-label">触觉 (T)</span><div class="slot-content" id="slot-touch"></div></div>
+                <div class="slot" data-type="smell"><span class="slot-label">嗅觉 (S)</span><div class="slot-content" id="slot-smell"></div></div>
+                <div class="slot" data-type="taste"><span class="slot-label">味觉 (A)</span><div class="slot-content" id="slot-taste"></div></div>
+            </div>
+        </div>
+
+        <div id="action-area">
+            <div class="panel command-panel">
+                <div class="panel-title">TERMINAL_INPUT (指令交互)</div>
+                <div style="flex:1; display:flex; align-items:center;">
+                    <input type="text" id="command-line" autocomplete="off" placeholder="查询/捕获/前往/出示">
+                </div>
+            </div>
+            <div class="inference-btn-container">
+                <button class="inference-btn" onclick="Engine && Engine.executeInference()">
+                    [ SYNC_MATRIX_INFERENCE ]
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+    
+    <script>
+        window.addEventListener('load', function() {
+            console.log('[系统] 等待引擎初始化...');
+            
+            let checkCount = 0;
+            const checkEngine = setInterval(function() {
+                checkCount++;
+                if (window.Engine) {
+                    clearInterval(checkEngine);
+                    document.getElementById('boot-title').textContent = 'T.E.C-OS [V5.0.0]';
+                    document.getElementById('loading-status').style.display = 'none';
+                    document.getElementById('connect-btn').style.display = 'block';
+                    document.getElementById('back-btn').style.display = 'block';
+                    
+                    const saveKey = window.Engine.state.caseId === 'default' 
+                        ? 'causal_os_save' 
+                        : 'causal_os_case_' + window.Engine.state.caseId;
+                    const savedState = localStorage.getItem(saveKey);
+                    if (savedState) {
+                        document.getElementById('clear-btn').style.display = 'block';
+                    }
+                    
+                    console.log('[系统] 引擎初始化完成，按钮已启用');
+                } else if (checkCount > 150) {
+                    clearInterval(checkEngine);
+                    document.getElementById('boot-title').textContent = 'T.E.C-OS [ERROR]';
+                    document.getElementById('loading-status').textContent = '引擎初始化失败，请检查控制台错误';
+                    console.error('[系统] 引擎初始化超时');
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

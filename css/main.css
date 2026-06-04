@@ -1,0 +1,1182 @@
+/* ========================== T.E.C-OS 主样式表 ========================== */
+
+/* CSS变量 - 主题配置（浅色明亮风格） */
+:root {
+    --os-green: #0969da;        /* GitHub 蓝色 */
+    --os-dark: #656d76;         /* 中性灰 */
+    --os-warn: #bf8700;         /* 橙色 */
+    --os-crit: #cf222e;         /* 红色 */
+    --os-truename: #8250df;     /* 紫色 */
+    --os-bg: #f6f8fa;           /* 浅灰背景 */
+    --color-char: #0969da;      /* 角色蓝 */
+    --color-item: #1a7f37;      /* 物品绿 */
+    --color-loc: #8250df;       /* 场景紫 */
+    --panel-border: 1px solid #d0d7de;  /* 分隔线 */
+    --slot-border: 1px solid #d0d7de;
+    --fs-small: 12px;
+    --fs-main: 14px;
+    --fs-large: 16px;
+    --cyber-cyan: #0891b2;      /* 青色 */
+    --cyber-pink: #be185d;      /* 粉色 */
+    
+    /* 五感矩阵颜色点缀 */
+    --sense-vision: #0969da;    /* 视觉 - 蓝 */
+    --sense-hearing: #8250df;   /* 听觉 - 紫 */
+    --sense-touch: #1a7f37;     /* 触觉 - 绿 */
+    --sense-smell: #bf8700;     /* 嗅觉 - 橙 */
+    --sense-taste: #be185d;     /* 味觉 - 粉 */
+}
+
+/* 全局重置 */
+* {
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #c8d1da #f6f8fa;
+}
+
+/* Webkit滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f6f8fa;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c8d1da;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8b6c6;
+}
+
+body { 
+    margin: 0; 
+    padding: 0; 
+    background-color: var(--os-bg); 
+    color: #24292f; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+    height: 100vh; 
+    overflow: hidden; 
+    display: flex; 
+    flex-direction: column; 
+}
+
+/* ========================== 布局组件 ========================== */
+
+/* Overlays */
+.overlay { 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    background: rgba(0, 0, 0, 0.95); 
+    z-index: 10000; 
+    display: none; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    padding: 20px; 
+}
+
+#boot-overlay { 
+    display: flex; 
+    background: var(--os-bg); 
+}
+
+/* 主UI布局 */
+#main-system {
+    display: grid;
+    grid-template-areas: "header header header" "scene monitor entity" "logic logic action";
+    grid-template-rows: 60px 1fr 220px;
+    grid-template-columns: 2.0fr 0.8fr 1.1fr;
+    gap: 8px;
+    padding: 8px;
+    height: 100vh;
+    visibility: hidden;
+    background: var(--os-bg);
+}
+
+header {
+    grid-area: header;
+    border: none;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    justify-content: space-between;
+    font-size: 13px;
+    background: #ffffff;
+    color: #24292f;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.panel {
+    border: none;
+    background: #ffffff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.panel-title {
+    background: #f6f8fa;
+    color: #0969da;
+    font-size: 11px;
+    padding: 14px 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #e8eaed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 48px;
+}
+
+/* 所有面板标题都应用顶部圆角 */
+.panel > .panel-title {
+    border-radius: 8px 8px 0 0;
+}
+
+/* entity-panel 的第二个标题不需要顶部圆角 */
+#entity-panel > .panel-title:not(:first-child) {
+    border-radius: 0;
+    border-top: 1px solid #e8eaed;
+}
+
+/* 面板中的后续标题栏需要顶部分隔线 */
+.panel > .panel-title:not(:first-child) {
+    border-top: 1px solid #e8eaed;
+}
+
+/* 面板区域 */
+#scene-panel {
+    grid-area: scene; 
+    padding: 0; 
+    overflow: hidden; 
+}
+
+#monitor-panel {
+    grid-area: monitor; 
+    padding: 0;
+}
+
+#log-container {
+    flex: 1;
+    overflow-y: auto;
+    font-size: var(--fs-main);
+    line-height: 1.6;
+    padding: 16px;
+    background: #ffffff;
+}
+
+#entity-panel {
+    grid-area: entity;
+    padding: 0;
+}
+
+#logic-panel {
+    grid-area: logic; 
+    padding: 0;
+    display: flex; 
+    flex-direction: column; 
+    gap: 0;
+}
+
+/* 矩阵布局 */
+.matrix-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    flex: 1;
+    padding: 8px;
+}
+
+.slot {
+    border: none;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    min-height: 85px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s;
+}
+
+.slot:hover {
+    background: #fafbfc;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.slot-label {
+    font-size: 11px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    padding-bottom: 4px;
+    color: #656d76;
+}
+
+/* 五感矩阵槽位颜色点缀 */
+.slot[data-type="vision"] .slot-label {
+    color: var(--sense-vision);
+}
+
+.slot[data-type="hearing"] .slot-label {
+    color: var(--sense-hearing);
+}
+
+.slot[data-type="touch"] .slot-label {
+    color: var(--sense-touch);
+}
+
+.slot[data-type="smell"] .slot-label {
+    color: var(--sense-smell);
+}
+
+.slot[data-type="taste"] .slot-label {
+    color: var(--sense-taste);
+}
+
+.slot-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    padding: 12px;
+    background: #ffffff;
+}
+
+/* 操作区域 */
+#action-area {
+    grid-area: action; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px;
+}
+
+#action-area .panel {
+    background: #ffffff;
+}
+
+.command-panel {
+    flex: 1;
+    padding: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+#command-line {
+    background: #ffffff;
+    border: none;
+    border-bottom: 1px solid #e8eaed;
+    color: #24292f;
+    font-family: inherit;
+    width: 100%;
+    outline: none;
+    padding: 16px;
+    font-size: var(--fs-large);
+    border-radius: 0 0 8px 8px;
+    transition: border-color 0.2s;
+}
+
+#command-line::placeholder {
+    color: #8b949e;
+}
+
+#command-line:focus {
+    border-bottom-color: #0969da;
+}
+
+.inference-btn-container {
+    padding: 16px;
+    background: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.inference-btn {
+    background: #0969da;
+    border: none;
+    color: #ffffff;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    width: 100%;
+    border-radius: 6px;
+}
+
+.inference-btn:hover {
+    background: #0550ae;
+}
+
+.inference-btn:active {
+    transform: translateY(0);
+}
+
+/* ========================== 微博风格日志 ========================== */
+
+.log-entry {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e8eaed;
+}
+
+.log-time {
+    color: #656d76;
+    font-size: 11px;
+    margin-right: 8px;
+}
+
+.log-with-media { 
+    margin-bottom: 8px; 
+}
+
+.log-image, .log-audio { 
+    margin-top: 8px; 
+}
+
+.log-image img { 
+    max-width: 100%; 
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 6px; 
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.log-image img:hover {
+    transform: scale(1.02);
+}
+
+/* 微博条目 */
+.weibo-entry {
+    display: flex;
+    gap: 10px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+.weibo-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #e0e0e0;
+}
+
+.weibo-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.weibo-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #999;
+    background: linear-gradient(135deg, #f6f8fa, #e8eaed);
+}
+
+.weibo-content { 
+    flex: 1; 
+    min-width: 0; 
+}
+
+.weibo-speaker {
+    font-weight: bold;
+    color: #0969da;
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.weibo-text { 
+    line-height: 1.6; 
+    word-break: break-word; 
+}
+
+.weibo-media { 
+    margin-top: 10px; 
+}
+
+.weibo-image {
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.weibo-image:hover { 
+    transform: scale(1.02); 
+}
+
+.weibo-audio {
+    width: 100%;
+    max-width: 300px;
+    height: 36px;
+}
+
+/* ========================== 图片预览 ========================== */
+
+.image-preview-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    cursor: pointer;
+}
+
+.image-preview-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+}
+
+.image-preview-overlay .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+}
+
+/* ========================== TRUE ENDING 样式 ========================== */
+
+#capture-overlay { 
+    background: #0000aa;
+    z-index: 50000;
+    overflow-y: auto;
+    justify-content: flex-start;
+    padding-top: 5vh;
+}
+
+#capture-overlay.critical-glitch {
+    background-color: #0000aa;
+    animation: none;
+}
+
+.truename-identified-label {
+    color: #ffffff;
+    font-size: 1.8rem;
+    letter-spacing: 12px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-family: "Arial", "Helvetica", sans-serif;
+    animation: nameGlitch 3s infinite;
+    will-change: transform, opacity;
+}
+
+.truename-title {
+    color: #ffffff;
+    font-size: 6.0rem;
+    letter-spacing: 25px;
+    font-weight: 900;
+    margin: 10px 0 30px 0;
+    font-family: "Arial", "Helvetica", sans-serif;
+    animation: nameGlitch 4s infinite reverse;
+    will-change: transform, opacity;
+}
+
+@keyframes nameGlitch {
+    0% { transform: translate(0); opacity: 1; }
+    92% { transform: translate(0); opacity: 1; }
+    94% { transform: translate(-2px, 1px); opacity: 0.8; text-shadow: 2px 0 #ffffff; }
+    96% { transform: translate(2px, -1px); opacity: 0.9; text-shadow: -2px 0 #ffffff; }
+    98% { transform: translate(-1px, -2px); opacity: 0.8; }
+    100% { transform: translate(0); opacity: 1; }
+}
+
+#story-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.story-line { 
+    font-size: 1rem;
+    margin: 8px 0; 
+    opacity: 0; 
+    transform: translateY(10px); 
+    transition: all 1s ease-out; 
+    color: #ffffff;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-align: center;
+    width: 100%;
+}
+
+.story-line.active { 
+    opacity: 1; 
+    transform: translateY(0); 
+}
+
+.story-separator {
+    border: none;
+    border-top: 1px dashed #ffcc00;
+    margin: 25px auto;
+    width: 50%;
+    opacity: 0.6;
+}
+
+.story-message {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #e0e0e0;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 4px;
+    border-left: 3px solid #ffcc00;
+    text-align: left;
+    letter-spacing: normal;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.reboot-btn-red {
+    background: #800000;
+    border: none;
+    color: #ffffff;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-family: "Arial", "Helvetica", sans-serif;
+    font-weight: bold;
+    letter-spacing: 10px;
+    transition: 0.3s;
+    text-transform: uppercase;
+    margin-top: 30px;
+}
+
+.reboot-btn-red:hover {
+    background: #ff0000;
+    color: #ffffff;
+}
+
+.disconnect-text {
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 12px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    animation: none;
+}
+
+/* ========================== 通用组件样式 ========================== */
+
+/* 交互对象 */
+.interactive-obj {
+    cursor: pointer; 
+    font-weight: 600; 
+    text-decoration: none; 
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    transition: opacity 0.2s; 
+}
+
+.interactive-obj:hover {
+    opacity: 0.7;
+}
+
+.obj-char { color: var(--color-char); }
+.obj-item { color: var(--color-item); }
+.obj-loc { color: var(--color-loc); }
+
+/* 线索样式 */
+.clue-link { 
+    color: var(--os-warn);
+    text-decoration: underline; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
+
+.clue-synced { 
+    color: #0969da;
+    font-weight: bold; 
+    text-decoration: none; 
+    cursor: default; 
+}
+
+/* 高亮样式 */
+.highlight-item { color: var(--color-item); font-weight: bold; }
+.highlight-char { color: var(--color-char); font-weight: bold; }
+.highlight-loc { color: var(--color-loc); font-weight: bold; }
+
+/* 线索节点 */
+.clue-node, .mini-clue {
+    padding: 8px 12px;
+    border: 1px solid #e8eaed;
+    font-size: var(--fs-main);
+    cursor: pointer;
+    background: #fafbfc;
+    color: #24292f;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.clue-node:hover {
+    background: #ffffff;
+    border-color: #d0d7de;
+}
+
+/* 线索类型颜色点缀 */
+.clue-node[data-type="vision"],
+.mini-clue[data-type="vision"] {
+    border-top: 2px solid var(--sense-vision);
+}
+
+.clue-node[data-type="hearing"],
+.mini-clue[data-type="hearing"] {
+    border-top: 2px solid var(--sense-hearing);
+}
+
+.clue-node[data-type="touch"],
+.mini-clue[data-type="touch"] {
+    border-top: 2px solid var(--sense-touch);
+}
+
+.clue-node[data-type="smell"],
+.mini-clue[data-type="smell"] {
+    border-top: 2px solid var(--sense-smell);
+}
+
+.clue-node[data-type="taste"],
+.mini-clue[data-type="taste"] {
+    border-top: 2px solid var(--sense-taste);
+}
+
+.clue-node.hidden { display: none; }
+
+.mini-clue {
+    margin-bottom: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid #e8eaed;
+    background: #fafbfc;
+    color: #24292f;
+    border-radius: 4px;
+}
+
+/* 上下文菜单 */
+#context-menu {
+    position: fixed;
+    background: #ffffff;
+    border: 1px solid #e8eaed;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 30000;
+    display: none;
+    min-width: 180px;
+    padding: 4px 0;
+}
+
+.menu-item {
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #24292f;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s;
+}
+
+.menu-item:hover {
+    background: #f6f8fa;
+    color: #0969da;
+}
+
+/* 模态框 */
+.modal { 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border: 1px solid #e8eaed;
+    padding: 25px;
+    z-index: 40000;
+    display: none;
+    min-width: 400px;
+    max-width: 80vw;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12); 
+}
+
+.boot-btn {
+    background: #0969da;
+    border: none;
+    color: #ffffff;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    border-radius: 6px;
+}
+
+.boot-btn:hover {
+    background: #0550ae;
+}
+
+.boot-btn:active {
+    transform: translateY(0);
+}
+
+/* 叙事捕获 */
+.narrative-capture {
+    border-left: 3px solid #0969da;
+    padding: 12px 0 12px 16px;
+    margin: 16px 0;
+    color: #24292f;
+    background: #fafbfc;
+    border-radius: 0 6px 6px 0;
+}
+
+/* 观察说明 */
+.observation-description {
+    color: #333333;
+    background: #ffffff;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    margin: 10px 0;
+}
+
+/* ========================== 自定义区域样式 ========================== */
+
+/* 视域终端 - 图文融合容器 */
+.scene-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #f6f8fa;
+}
+
+/* 场景背景图片/艺术图 */
+.scene-bg-artwork {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.scene-bg-artwork.loaded {
+    opacity: 1;
+}
+
+.scene-bg-artwork img,
+.scene-bg-artwork svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 视图切换按钮 */
+.btn-view-toggle {
+    background: transparent;
+    border: 1px solid #0969da;
+    color: #0969da;
+    padding: 4px 12px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    font-weight: 600;
+    border-radius: 4px;
+    line-height: 1;
+    height: auto;
+}
+
+.btn-view-toggle:hover {
+    background: #0969da;
+    color: #ffffff;
+}
+
+/* 极乐迪斯科式：全屏透明叠放叙事层 */
+.disco-story-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    justify-content: flex-end;
+    
+    /* 进一步增强背景渐变透明度，提升文字可读性 */
+    background: linear-gradient(to right, 
+        rgba(246, 248, 250, 0.0) 0%, 
+        rgba(246, 248, 250, 0.15) 20%,
+        rgba(246, 248, 250, 0.98) 50%,
+        rgba(246, 248, 250, 1.0) 100%);
+    
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 当激活纯观图模式时的样式状态 */
+.scene-container.pure-view-mode .disco-story-overlay {
+    opacity: 0;
+    transform: translateX(30px);
+    pointer-events: none;
+}
+
+/* 文字实际容纳滚动区 */
+.disco-scroll-area {
+    width: 48%;
+    height: 100%;
+    padding: 28px 24px;
+    overflow-y: auto;
+}
+
+#text-scene {
+    line-height: 2.2;
+    font-size: 16px;
+}
+
+.disco-scroll-area p {
+    margin-bottom: 18px;
+    color: #111827;  /* 更深的文字颜色，提升可读性 */
+    font-size: 16px;  /* 增大字号 */
+    line-height: 2.0;  /* 增加行高，更易阅读 */
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95);  /* 增强白色阴影 */
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+.disco-scroll-area p:first-child {
+    margin-top: 0;
+}
+
+/* 线索列表 */
+#clues-list {
+    padding: 12px;
+    flex: 3;
+    overflow-y: auto;
+}
+
+/* 结局历史 */
+#endings-history {
+    padding: 12px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* 结局条目样式优化 */
+#endings-history div {
+    color: #0969da !important;  /* 使用主题蓝色 */
+    font-size: 15px;  /* 增大字号 */
+    line-height: 1.8;  /* 增加行高 */
+    margin-bottom: 10px !important;  /* 增加间距 */
+    padding: 10px 14px;  /* 增加内边距 */
+    background: rgba(9, 105, 218, 0.04);  /* 添加淡蓝色背景 */
+    border-radius: 6px;  /* 添加圆角 */
+    border-left: 3px solid #0969da;  /* 左侧蓝色竖线装饰 */
+    font-weight: 500;  /* 稍微加粗 */
+    transition: all 0.2s;
+}
+
+#endings-history div:hover {
+    background: #ffffff;
+    border-left-color: #0550ae;
+}
+
+#endings-history div b {
+    font-weight: 600;
+    color: #0550ae;
+}
+
+/* 移动端Tab导航 */
+.mobile-tab-nav {
+    display: none;
+}
+
+/* ========================== 移动端适配 ========================== */
+
+@media (max-width: 768px) {
+    body {
+        overflow: hidden;
+        height: 100vh;
+    }
+
+    #main-system {
+        grid-template-areas: "tabnav" "content" "action";
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: 1fr;
+        height: 100vh;
+        overflow: hidden;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    /* Tab导航 */
+    .mobile-tab-nav {
+        display: flex;
+        grid-area: tabnav;
+        background: #ffffff;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 移动端Tab按钮 */
+    .mobile-tab-btn {
+        flex: 1;
+        background: #ffffff;
+        border: none;
+        border-right: 1px solid #e8eaed;
+        color: #24292f;
+        padding: 12px 4px;
+        font-family: inherit;
+        font-size: 12px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .mobile-tab-btn:last-child {
+        border-right: none;
+    }
+
+    .mobile-tab-btn.active {
+        background: #0969da;
+        border: none;
+        color: #ffffff;
+    }
+
+    /* 隐藏桌面header */
+    header {
+        display: none;
+    }
+
+    /* 内容区域 */
+    #scene-panel,
+    #monitor-panel,
+    #entity-panel,
+    #logic-panel {
+        display: none;
+        overflow: hidden;
+    }
+
+    /* Tab1: 场景 */
+    #main-system[data-tab="scene"] #scene-panel {
+        display: flex;
+        grid-area: scene;
+    }
+
+    /* Tab2: 矩阵 */
+    #main-system[data-tab="matrix"] #logic-panel {
+        display: flex;
+        grid-area: logic;
+    }
+
+    #main-system[data-tab="matrix"] #entity-panel {
+        display: flex;
+        grid-area: entity;
+    }
+
+    /* Tab3: 因果 */
+    #main-system[data-tab="truth"] #entity-panel {
+        display: flex;
+        grid-area: entity;
+    }
+
+    /* Tab1 场景布局 */
+    #main-system[data-tab="scene"] {
+        grid-template-areas: "tabnav" "scene" "monitor" "action";
+        grid-template-rows: auto 1fr 1fr auto;
+    }
+
+    #main-system[data-tab="scene"] #scene-panel {
+        flex-direction: column;
+        padding: 0;
+        grid-area: scene;
+    }
+
+    #main-system[data-tab="scene"] #text-scene {
+        flex: 1;
+        padding: 12px;
+        font-size: 16px;
+        line-height: 2.2;
+        overflow-y: auto;
+    }
+    
+    /* 移动端场景文字优化 */
+    #main-system[data-tab="scene"] .disco-scroll-area {
+        width: 100%;
+        padding: 16px;
+    }
+    
+    #main-system[data-tab="scene"] .disco-scroll-area p {
+        font-size: 17px;
+        line-height: 2.0;
+        color: #111827;
+        text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95);
+    }
+    
+    /* 移动端场景背景渐变增强 */
+    #main-system[data-tab="scene"] .disco-story-overlay {
+        background: linear-gradient(to bottom, 
+            rgba(246, 248, 250, 0.0) 0%, 
+            rgba(246, 248, 250, 0.95) 70%,
+            rgba(246, 248, 250, 1.0) 100%);
+    }
+
+    /* Tab2 矩阵布局 */
+    #main-system[data-tab="matrix"] {
+        grid-template-areas: "tabnav" "logic" "entity" "action";
+        grid-template-rows: auto 1fr 1fr auto;
+    }
+
+    #main-system[data-tab="matrix"] .matrix-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        flex: 1;
+    }
+
+    #main-system[data-tab="matrix"] .slot {
+        min-height: 50px;
+        padding: 8px;
+    }
+
+    /* 移动端五感槽位标签优化 */
+    #main-system[data-tab="matrix"] .slot-label {
+        font-size: 10px;
+    }
+
+    /* 移动端矩阵间距优化 */
+    .matrix-container {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    /* Tab3 因果布局 */
+    #main-system[data-tab="truth"] {
+        grid-template-areas: "tabnav" "entity" "action";
+    }
+
+    /* 操作区域 */
+    #action-area {
+        grid-area: action;
+        gap: 4px;
+    }
+
+    .command-panel {
+        padding: 8px;
+    }
+
+    #command-line {
+        font-size: 14px;
+        padding: 8px 5px;
+    }
+
+    .inference-btn-container {
+        padding: 6px;
+    }
+
+    .inference-btn {
+        padding: 10px 12px;
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    /* 触摸优化 */
+    .mobile-tab-btn,
+    .inference-btn,
+    .clue-node {
+        min-height: 44px;
+        padding: 10px;
+    }
+
+    /* 移动端线索左边框优化 */
+    .clue-node,
+    .mini-clue {
+        border-left-width: 3px;
+    }
+
+    /* 右键菜单适配 */
+    #context-menu {
+        max-width: 80vw;
+        min-width: 120px;
+        box-shadow: 3px 3px 0 var(--os-green);
+    }
+
+    .menu-item {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-tab-btn {
+        font-size: 11px;
+        padding: 10px 2px;
+    }
+
+    #main-system[data-tab="scene"] #text-scene {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .weibo-image {
+        max-height: 150px;
+    }
+}
+
+/* 移动端图片适配 */
+@media (max-width: 768px) {
+    .weibo-image {
+        max-height: 200px;
+    }
+
+    #main-system[data-tab="scene"] #monitor-panel .weibo-image {
+        max-width: 100%;
+        height: auto;
+    }
+}

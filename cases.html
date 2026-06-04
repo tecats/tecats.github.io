@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>T.E.C-OS // 案件档案库</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            background: #f6f8fa;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* ===== 顶部标题区 ===== */
+        .page-header {
+            position: relative;
+            padding: 20px 40px 16px;
+            text-align: center;
+            background: #ffffff;
+            border-bottom: 1px solid #e8eaed;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .page-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .page-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            color: #0969da;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #0969da;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin-left: auto;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: transparent;
+            border: 1px solid #0969da;
+            border-radius: 6px;
+        }
+
+        .back-link:hover {
+            background: #0969da;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(9, 105, 218, 0.3);
+        }
+
+        .back-link:active {
+            transform: scale(0.98);
+        }
+
+        .page-subtitle {
+            font-size: 12px;
+            color: #656d76;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 主内容区 ===== */
+        .page-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 50px;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        /* ===== 卡片容器 ===== */
+        .cases-wrapper {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* 滚动条样式 */
+        .page-content::-webkit-scrollbar { height: 8px; }
+        .page-content::-webkit-scrollbar-track { background: #f6f8fa; border-radius: 4px; }
+        .page-content::-webkit-scrollbar-thumb { background: #c8d1da; border-radius: 4px; }
+        .page-content::-webkit-scrollbar-thumb:hover { background: #a8b6c6; }
+
+        /* ===== 案件卡片 ===== */
+        .case-card {
+            width: 240px;
+            min-width: 240px;
+            background: #ffffff;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 0;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .case-card:hover {
+            border-color: #d0d7de;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .case-card:active {
+            transform: translateY(0);
+        }
+
+        /* 卡片顶部标签区 */
+        .card-header {
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f6f8fa;
+            border-bottom: 1px solid #e8eaed;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 6px;
+        }
+
+        .card-tag {
+            font-size: 9px;
+            padding: 3px 8px;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+
+        .tag-type { background: #656d76; }
+        .tag-level-1 { background: #1a7f37; }
+        .tag-level-2 { background: #0969da; }
+        .tag-level-3 { background: #cf222e; }
+
+        .card-warning {
+            color: #cf222e;
+            font-size: 14px;
+        }
+
+        /* 卡片中间内容 */
+        .card-body {
+            padding: 20px 14px;
+            text-align: center;
+        }
+
+        .card-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #24292f;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .card-desc {
+            font-size: 11px;
+            color: #656d76;
+            line-height: 1.6;
+        }
+
+        /* 卡片底部 */
+        .card-footer {
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f6f8fa;
+            border-top: 1px solid #e8eaed;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .card-id {
+            font-size: 11px;
+            color: #656d76;
+            font-weight: 600;
+        }
+
+        .card-arrow {
+            color: #0969da;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* 存档状态标签 */
+        .save-status {
+            font-size: 9px;
+            padding: 3px 8px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+
+        .save-status.saved {
+            background: #1a7f37;
+            color: #fff;
+        }
+
+        .save-status.unsaved {
+            background: #656d76;
+            color: #fff;
+        }
+
+        /* 按钮样式 */
+        .card-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e8eaed;
+            background: #ffffff;
+            color: #24292f;
+            margin: 4px 2px 0;
+            font-family: inherit;
+            border-radius: 6px;
+        }
+
+        .card-btn:hover {
+            border-color: #d0d7de;
+            background: #f6f8fa;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-btn:active {
+            transform: scale(0.98);
+        }
+
+        .card-btn-continue {
+            background: #0969da;
+            color: #fff;
+            border-color: #0969da;
+        }
+
+        .card-btn-continue:hover {
+            background: #0550ae;
+            border-color: #0550ae;
+        }
+
+        /* ===== 移动端适配 ===== */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 16px 20px 12px;
+            }
+
+            .page-title-wrapper {
+                gap: 8px;
+            }
+
+            .page-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .page-title {
+                font-size: 16px;
+                letter-spacing: 3px;
+            }
+
+            .back-link {
+                margin-left: 16px;
+            }
+
+            .page-content {
+                padding: 30px 10px;
+            }
+
+            .cases-wrapper {
+                gap: 14px;
+                padding: 10px 15px;
+            }
+
+            .case-card {
+                width: 180px;
+                min-width: 180px;
+            }
+
+            .card-body {
+                padding: 16px 12px;
+            }
+
+            .card-name {
+                font-size: 13px;
+            }
+
+            .card-desc {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部标题区 -->
+    <header class="page-header">
+        <div class="page-title-wrapper">
+            <svg class="page-icon" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 6C2 4.89543 2.89543 4 4 4H10.5858C11.1162 4 11.6249 4.21071 12 4.58579L14.4142 7H24C25.1046 7 26 7.89543 26 9V20C26 21.1046 25.1046 22 24 22H4C2.89543 22 2 21.1046 2 20V6Z" fill="#555555"/>
+                <path d="M4 8H24V18C24 19.1046 23.1046 20 22 20H6C4.89543 20 4 19.1046 4 18V8Z" fill="#888888"/>
+                <rect x="8" y="12" width="12" height="2" fill="#ffffff" opacity="0.8"/>
+                <rect x="8" y="15" width="8" height="2" fill="#ffffff" opacity="0.5"/>
+            </svg>
+            <h1 class="page-title">案件档案库</h1>
+            <a href="index.html" class="back-link" title="返回主菜单">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 4L4 10L10 16M4 10H18" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+                返回主菜单
+            </a>
+        </div>
+        <p class="page-subtitle">CASE ARCHIVE // 请选择要查阅的案件档案</p>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="page-content">
+        <div class="cases-wrapper">
+
+            <a class="case-card" data-case="A-001" href="game.html?case=A-001&fresh=1">
+                <div class="card-header">
+                    <div class="card-tags">
+                        <span class="card-tag tag-type">区域</span>
+                        <span class="card-tag tag-level-1">初级</span>
+                    </div>
+                    <span class="card-warning">▼</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name">植物学家的花园</div>
+                    <div class="card-desc">异动区域</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-id">A-001</span>
+                    <span class="card-arrow">进入 ▶</span>
+                </div>
+            </a>
+
+            <a class="case-card" data-case="A-002" href="game.html?case=A-002&fresh=1">
+                <div class="card-header">
+                    <div class="card-tags">
+                        <span class="card-tag tag-type">区域</span>
+                        <span class="card-tag tag-level-1">初级</span>
+                    </div>
+                    <span class="card-warning">▼</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name">杏花树下</div>
+                    <div class="card-desc">异动区域</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-id">A-002</span>
+                    <span class="card-arrow">进入 ▶</span>
+                </div>
+            </a>
+
+            <div class="case-card locked">
+                <div class="card-header">
+                    <div class="card-tags">
+                        <span class="card-tag tag-type">???</span>
+                        <span class="card-tag tag-level-3">已锁定</span>
+                    </div>
+                    <span class="card-warning">🔒</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name">档案未解密</div>
+                    <div class="card-desc">权限不足，无法访问</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-id">A-003</span>
+                    <span class="card-arrow">-- --</span>
+                </div>
+            </div>
+
+            <div class="case-card locked">
+                <div class="card-header">
+                    <div class="card-tags">
+                        <span class="card-tag tag-type">???</span>
+                        <span class="card-tag tag-level-3">已锁定</span>
+                    </div>
+                    <span class="card-warning">🔒</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name">档案未解密</div>
+                    <div class="card-desc">权限不足，无法访问</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-id">A-004</span>
+                    <span class="card-arrow">-- --</span>
+                </div>
+            </div>
+
+            <div class="case-card locked">
+                <div class="card-header">
+                    <div class="card-tags">
+                        <span class="card-tag tag-type">???</span>
+                        <span class="card-tag tag-level-3">已锁定</span>
+                    </div>
+                    <span class="card-warning">🔒</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name">档案未解密</div>
+                    <div class="card-desc">权限不足，无法访问</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-id">A-005</span>
+                    <span class="card-arrow">-- --</span>
+                </div>
+            </div>
+
+            <div class="case-card locked">
+                <div class="card-header">
+                    <div class="card-tags">
+                        <span class="card-tag tag-type">???</span>
+                        <span class="card-tag tag-level-3">已锁定</span>
+                    </div>
+                    <span class="card-warning">🔒</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name">档案未解密</div>
+                    <div class="card-desc">权限不足，无法访问</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-id">A-006</span>
+                    <span class="card-arrow">-- --</span>
+                </div>
+            </div>
+
+            <div class="case-card locked">
+                <div class="card-header">
+                    <div class="card-tags">
+                        <span class="card-tag tag-type">???</span>
+                        <span class="card-tag tag-level-3">已锁定</span>
+                    </div>
+                    <span class="card-warning">🔒</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name">档案未解密</div>
+                    <div class="card-desc">权限不足，无法访问</div>
+                </div>
+                <div class="card-footer">
+                    <span class="card-id">A-007</span>
+                    <span class="card-arrow">-- --</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // 存档索引key
+        const SAVE_INDEX_KEY = 'causal_os_save_index';
+        
+        // 获取存档索引
+        function getSaveIndex() {
+            try {
+                const indexStr = localStorage.getItem(SAVE_INDEX_KEY);
+                return indexStr ? JSON.parse(indexStr) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        // 获取案件存档key
+        function getCaseSaveKey(caseId) {
+            return `causal_os_case_${caseId}`;
+        }
+
+        // 检查存档是否存在
+        function hasSave(caseId) {
+            const saveKey = caseId === 'default' ? 'causal_os_save' : getCaseSaveKey(caseId);
+            return localStorage.getItem(saveKey) !== null;
+        }
+
+        // 进入案件
+        function enterCase(caseId, fresh = false, baseUrl = 'game.html') {
+            let url = `${baseUrl}?case=${caseId}`;
+            if (fresh) url += '&fresh=1';
+            window.location.href = url;
+        }
+
+        // 删除存档
+        function deleteSave(e, caseId) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (confirm(`确定要删除案件 ${caseId} 的存档吗？此操作不可恢复。`)) {
+                const saveKey = caseId === 'default' ? 'causal_os_save' : getCaseSaveKey(caseId);
+                localStorage.removeItem(saveKey);
+                
+                // 从索引中移除
+                const index = getSaveIndex();
+                delete index[caseId];
+                localStorage.setItem(SAVE_INDEX_KEY, JSON.stringify(index));
+                
+                location.reload();
+            }
+        }
+
+        // 初始化存档状态显示
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.case-card[data-case]');
+            cards.forEach(card => {
+                const caseId = card.dataset.case;
+                const footer = card.querySelector('.card-footer');
+                if (!footer) return;
+
+                if (hasSave(caseId)) {
+                    // 已有存档
+                    footer.innerHTML = `
+                        <span class="card-id">${caseId}</span>
+                        <div>
+                            <span class="save-status saved">已保存</span>
+                        </div>
+                    `;
+                    // 点击卡片继续游戏
+                    card.onclick = (e) => {
+                        e.preventDefault();
+                        const href = card.getAttribute('href') || 'game.html';
+                        const baseUrl = href.split('?')[0];
+                        enterCase(caseId, false, baseUrl);
+                    };
+                    card.style.cursor = 'pointer';
+                } else {
+                    // 无存档
+                    footer.innerHTML = `
+                        <span class="card-id">${caseId}</span>
+                        <div>
+                            <span class="save-status unsaved">未开始</span>
+                        </div>
+                    `;
+                    // 点击卡片开始新游戏
+                    card.onclick = (e) => {
+                        e.preventDefault();
+                        const href = card.getAttribute('href') || 'game.html';
+                        const baseUrl = href.split('?')[0];
+                        enterCase(caseId, true, baseUrl);
+                    };
+                    card.style.cursor = 'pointer';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
