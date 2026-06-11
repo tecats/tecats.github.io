@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>粽口难调：厨房不合作运动 · 终极奥义版</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #00ff66;
+            --card-bg: #1e1e1e;
+            --border-color: #00ff66;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: "Consolas", "Courier New", "Microsoft YaHei", monospace;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            font-size: 16px; 
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* 🪐 幽默极简颜文字进入页面 */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0d0d0d;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #welcome-screen.fade-out {
+            opacity: 0;
+            transform: translateY(-30px);
+            pointer-events: none;
+        }
+        
+        /* 💡 精简且中二的中心文字外框 */
+        .funny-terminal {
+            max-width: 600px;
+            width: 100%;
+            border: 2px dashed var(--border-color);
+            background: #151515;
+            padding: 25px 15px;
+            box-sizing: border-box;
+            box-shadow: 0 0 25px rgba(0,255,102,0.15);
+            margin-bottom: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .core-title {
+            font-size: 22px;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(0,255,102,0.8);
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .welcome-ascii {
+            font-family: monospace;
+            white-space: pre;
+            color: #ffcc00;
+            line-height: 1.2;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+        
+        .funny-line {
+            font-size: 14px;
+            color: #ff3366;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 3px dashed var(--border-color);
+            padding-bottom: 10px;
+            width: 100%;
+            max-width: 1000px;
+            text-shadow: 0 0 15px rgba(0,255,102,0.6);
+            font-size: 26px;
+            margin: 5px 0 15px 0;
+        }
+        #game-container {
+            display: flex;
+            width: 100%;
+            max-width: 1000px;
+            height: 520px; 
+            gap: 20px;
+            margin-top: 5px;
+        }
+        #battlefield {
+            flex: 1.3;
+            border: 2px solid var(--border-color);
+            background: rgba(0,255,102,0.02);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        #sidebar {
+            flex: 1;
+            border: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            box-sizing: border-box;
+            background: #171717;
+        }
+        #log-window {
+            flex: 1; 
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            border-bottom: 2px dashed var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .log-entry { margin-bottom: 6px; }
+        .log-system { color: #ccc; }
+        .log-flavor { color: #ffcc00; font-style: italic; font-weight: bold; }
+        .log-win { color: #00ff66; font-weight: bold; }
+        .log-alert { color: #ff3333; font-weight: bold; }
+        
+        #status-panel {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .monitor-dash {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(0,255,102,0.3);
+            font-size: 12px;
+            color: #88ffaa;
+            font-family: monospace;
+        }
+
+        #hand-area {
+            width: 100%;
+            max-width: 1000px;
+            height: 140px;
+            border: 2px dashed var(--border-color);
+            margin-top: 15px;
+            display: flex;
+            justify-content: safe center; 
+            align-items: center;
+            gap: 12px;
+            background: rgba(0,255,102,0.01);
+            overflow-x: auto;
+            padding: 0 15px;
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
+        }
+        .card {
+            width: 145px;
+            min-width: 135px;
+            height: 115px;
+            border: 2px solid var(--border-color);
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 8px;
+            box-sizing: border-box;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: bold;
+            transition: transform 0.1s, box-shadow 0.1s;
+            touch-action: none;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,255,102,0.3);
+        }
+        .card-title { font-size: 13px; font-weight: bold; border-bottom: 2px solid var(--border-color); padding-bottom: 3px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-desc { color: #88ffaa; font-size: 11px; margin-top: 4px; flex-grow: 1; font-weight: normal; line-height: 1.2; }
+        
+        #enemy-box {
+            width: 100%;
+            max-width: 300px;
+            border: 3px solid #ff3366;
+            background: #2a1217;
+            color: #ff4466;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255,51,102,0.3);
+            text-align: center;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        #enemy-box.drop-hover {
+            background: #5a1a24;
+            transform: scale(1.02);
+        }
+        #enemy-ascii {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 15px;
+            line-height: 1.2;
+            margin: 15px 0;
+            color: #ff6688;
+            font-weight: bold;
+        }
+        #enemy-box.frenzy-active {
+            animation: target-blink 0.2s infinite alternate;
+            cursor: pointer;
+        }
+        #enemy-box.converted {
+            border-color: #00ff66 !important;
+            background: #122a17 !important;
+            color: #00ff66 !important;
+            box-shadow: 0 0 30px rgba(0,255,102,0.6) !important;
+        }
+        #enemy-box.converted #enemy-ascii {
+            color: #00ff66 !important;
+        }
+        
+        @keyframes target-blink {
+            from { border-color: #ff3366; box-shadow: 0 0 10px #ff3366; opacity: 1; }
+            to { border-color: #ffcc00; box-shadow: 0 0 25px #ffcc00; opacity: 0.6; }
+        }
+
+        #enemy-name { font-size: 18px; font-weight: bold; }
+        #enemy-quote { font-size: 12px; color: #ff8888; font-style: italic; }
+        
+        .hp-bar {
+            width: 100%;
+            background: #441111;
+            border: 2px solid #ff3366;
+            height: 14px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .hp-fill {
+            width: 100%;
+            height: 100%;
+            background: #ff3366;
+            transition: width 0.15s ease-out;
+        }
+        
+        #timer-box {
+            font-size: 22px;
+            color: #ff3333;
+            margin-bottom: 12px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,51,51,0.5);
+            border: 2px dashed #ff3333;
+            padding: 8px;
+            text-align: center;
+        }
+        .timer-flash { animation: blink 0.2s infinite alternate !important; background: #441111; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
+
+        #frenzy-banner {
+            position: absolute; background: #ffcc00; color: #000; font-weight: bold;
+            font-size: 16px; padding: 6px 12px; border: 2px solid #ff3300; border-radius: 5px;
+            z-index: 20; box-shadow: 0 0 15px #ffcc00; animation: blink 0.3s infinite alternate; pointer-events: none;
+            text-align: center; width: 80%;
+        }
+
+        #obstacle-card {
+            position: absolute; width: 200px; padding: 12px; text-align: center;
+            border-radius: 8px; z-index: 10; cursor: pointer; font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        .obs-type-0 { background: #e67e22; border: 3px solid #d35400; box-shadow: 0 0 20px #e67e22; color: #fff;}
+        .obs-type-1 { background: #9b59b6; border: 3px solid #8e44ad; box-shadow: 0 0 20px #9b59b6; color: #fff;}
+        .obs-type-2 { background: #c0392b; border: 3px solid #962d22; box-shadow: 0 0 20px #c0392b; color: #ffff00;}
+
+        .hidden { display: none !important; }
+        #overlay {
+            position: fixed; top:0; left:0; width:100vw; height:100vh;
+            background: rgba(0,0,0,0.96); display: flex; justify-content: center;
+            align-items: center; flex-direction: column; z-index: 100; padding: 20px;
+            box-sizing: border-box;
+        }
+        #overlay p { max-width: 650px; text-align: center; line-height: 1.6; font-size: 15px;}
+        .btn {
+            background: transparent; color: var(--text-color); border: 2px solid var(--border-color);
+            padding: 10px 20px; cursor: pointer; font-family: inherit; font-size: 16px; margin-top: 12px; font-weight: bold;
+            border-radius: 4px;
+        }
+        .btn:hover { background: var(--text-color); color: #000; }
+        .guide-tips { text-align: center; color: #888; font-size: 13px; margin-top: 8px; font-weight: bold; padding: 0 5px; }
+
+        /* 📡 新增：高订制“现世召唤”量子终端弹窗 */
+        #custom-alert-box {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 300; /* 高于结算层 */
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box;
+        }
+        .alert-terminal {
+            max-width: 420px; width: 100%;
+            background: #161616;
+            border: 3px solid #ffcc00;
+            box-shadow: 0 0 35px rgba(255,204,0,0.4);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            box-sizing: border-box;
+            animation: alertPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes alertPop {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .alert-title-gold {
+            color: #ffcc00; font-size: 24px; font-weight: bold;
+            margin-bottom: 15px; text-shadow: 0 0 10px rgba(255,204,0,0.5);
+        }
+
+        /* 📱 移动端自适应 */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            #game-container { flex-direction: column; height: auto; gap: 12px; }
+            #battlefield { width: 100%; min-height: 280px; padding: 10px; }
+            #sidebar { width: 100%; height: 240px; padding: 10px; }
+            #log-window { flex: 1; max-height: 110px; overflow-y: auto; margin-bottom: 8px; }
+            #status-panel { font-size: 13px; }
+            .monitor-dash { margin-top: 5px; padding-top: 5px; font-size: 11px; }
+            #hand-area { justify-content: flex-start; margin-top: 10px; height: 130px; }
+            h1 { font-size: 18px; margin-bottom: 10px; }
+            .card { width: 125px; min-width: 125px; height: 105px; font-size: 12px; }
+            .card-title { font-size: 11px; }
+            .card-desc { font-size: 10px; }
+            
+            /* 进入页面移动端微调 */
+            .funny-terminal { padding: 15px 10px; margin-bottom: 20px; }
+            .core-title { font-size: 16px; margin: 5px 0; }
+            .welcome-ascii { font-size: 11px; margin-bottom: 12px; }
+            .funny-line { font-size: 12px; margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🪐 极简精简版进入页面层 -->
+    <div id="welcome-screen">
+        <!-- 像素线条粽子大颜文字 -->
+        <div class="welcome-ascii">
+     /＼
+    /  ＼   
+   / 咸 ＼    (﹃  ) 🍖 滚烫流油~
+  /_-肉-_＼  
+  (๑•̀ㅂ•́)و✧  敲碗等待中！
+        </div>
+        
+        <!-- 💡 核心改动：中心区域只保留干净的主标题与一句欠揍的颜文字 -->
+        <div class="funny-terminal">
+            <div style="font-size: 11px; color: #666; letter-spacing: 2px;">[ ⚡ CORE_PROMPT_DETECTED ⚡ ]</div>
+            <div class="core-title">粽口难调：厨房不合作运动 · 终极奥义版</div>
+            <div class="funny-line">(╬￣皿￣)凸 甜党狂暴逼近中！</div>
+        </div>
+        
+        <button class="btn" style="font-size: 18px; padding: 14px 32px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,255,102,0.3);" onclick="startGameFromWelcome()">
+            (╯°Д°)╯ 接入正统咸党主控台！
+        </button>
+    </div>
+
+    <h1>[ 粽口难调：厨房不合作运动 · 终极奥义版 ]</h1>
+    
+    <div id="game-container">
+        <!-- 战场 -->
+        <div id="battlefield">
+            <div id="frenzy-banner" class="hidden">⚠️ 目标防线崩溃！开始疯狂爆锤点击！！</div>
+
+            <!-- 三合一复活结界 -->
+            <div id="obstacle-card" class="hidden" onclick="hitObstacle()">
+                <div id="obs-title">⚠️ 结界拦截！</div>
+                <div id="obs-desc" style="font-size:11px; margin:4px 0; font-weight:normal;">阻碍卡</div>
+                <div style="font-size:15px;">狂点解除!! (<span id="obs-hp">5</span>)</div>
+            </div>
+
+            <!-- 颜文字线条敌人 -->
+            <div id="enemy-box" onclick="clickEnemyFrenzy()">
+                <div class="card-title" id="enemy-name">精制糖圣职者</div>
+                <div id="enemy-quote">“生活太苦，粽子必须是甜的！”</div>
+                
+                <!-- 线条粽子形态区 -->
+                <div id="enemy-ascii"></div>
+                
+                <div class="hp-bar"><div class="hp-fill" id="enemy-hp"></div></div>
+                <div style="font-size: 13px; margin-top:5px; font-weight: bold;">顽固理智值: <span id="hp-text">80</span>/<span id="max-hp-text">80</span></div>
+            </div>
+        </div>
+        
+        <!-- 侧边栏 -->
+        <div id="sidebar">
+            <div id="timer-box">⏱️ 极限倒计时: <span id="timer-num">30</span> 秒</div>
+            <div id="log-window">
+                <div class="log-entry log-system">> 因果律传教矩阵升级就绪...</div>
+                <div class="log-entry log-system">> 击溃全部 5 个顽固流派，即可赢取无上荣誉！</div>
+            </div>
+            <div id="status-panel">
+                <div>📈 已同化异教徒数量: <span id="kill-count">0</span>/5</div>
+                <div class="monitor-dash">
+                    <div>[SYS_MONITOR] 核心参数在线监视：</div>
+                    <div>• 现世五花肉油脂饱和度: <span style="color:#ff3366">98.4% (OVERFLOW)</span></div>
+                    <div>• 咸肉因果律主线辐射场: <span style="color:#00ff66">ACTIVE</span></div>
+                    <div>• 糖分反抗军精神抗性: <span id="dash-resist" style="color:#ffcc00">DEGRADED</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 玩家五张手牌区 -->
+    <div id="hand-area"></div>
+    <div class="guide-tips" id="guide-text">💡 玩法：拖拽下方卡牌到线条粽子区域！理智打光后疯狂连点超度！(支持手机触屏拖拽)</div>
+
+    <!-- 结算大弹窗 -->
+    <div id="overlay" class="hidden">
+        <h2 id="result-title" style="font-size: 28px; text-align: center;">【 终局真香审计 】</h2>
+        <h3 id="result-badge" style="color: #00ff66; font-size: 18px; border: 2px dashed #00ff66; padding: 5px 15px; margin: 10px 0; text-align: center;">称号生成中...</h3>
+        <p id="result-desc">结算文案加载中...</p>
+        <!-- 💡 核心修改：移除原 alert 触发 -->
+        <button class="btn" id="action-btn" onclick="openCustomAlert()">现世召唤</button>
+        <button class="btn" style="border-color:#888; color:#888; font-size:13px;" onclick="location.reload()">不服，重开一局</button>
+    </div>
+
+    <!-- 📡 新增：风格100%匹配的自定义“现世召唤”警告弹窗 -->
+    <div id="custom-alert-box" class="hidden">
+        <div class="alert-terminal">
+            <div class="alert-title-gold">⚠️ [ 现世因果干扰判定 ]</div>
+            <div style="font-size: 45px; margin: 15px 0;">( ఠ ✉ ఠ )</div>
+            <p style="color: #fff; font-size: 20px; font-weight: bold; letter-spacing: 1px; margin: 15px 0;">
+                还不去买一个！！！
+            </p>
+            <p style="color: #888; font-size: 12px; line-height: 1.4;">
+                [检测到流油五花肉及沙沙咸蛋黄在三维世界严重匮乏，请立刻前往最近的补给点进行物理收容。]
+            </p>
+            <button class="btn" style="border-color: #ffcc00; color: #ffcc00; margin-top: 20px; padding: 8px 30px;" onclick="closeCustomAlert()">
+                (￣^￣) 领命！这就去买！
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const CARD_POOL = [
+            { id: 'meat', title: '🥩 致死量五花肉', desc: '极端暴力的油脂浸透。', dmg: 15 },
+            { id: 'soy', title: '🍶 陈年老抽洗礼', desc: '赋予糯米深邃暗金因果。', dmg: 10 },
+            { id: 'egg', title: '🍳 蛋黄量子对撞', desc: '沙沙流油的超感官精神污染。', dmg: 12 },
+            { id: 'grandma', title: '👵 外婆的唠叨', desc: '触发沉重的血缘压制判定。', dmg: 16 },
+            { id: 'juice', title: '🌊 独门高汤轰炸', desc: '让每一个米粒饱含肉汁精粹。', dmg: 14 }
+        ];
+
+        const ENEMIES = [
+            { 
+                name: '精制糖圣职者', quote: '“生活太苦，粽子必须裹满白糖！”', hp: 70, maxHp: 70,
+                ascii: "   /\\\n  /  \\\n / 蜜 \\\n/_-甜-_\\\n(｀Д´)ノ"
+            },
+            { 
+                name: '键盘卡路里教皇', quote: '“这一口油脂等于我慢跑五十公里！”', hp: 90, maxHp: 90,
+                ascii: "   /\\\n  /  \\\n / 算 \\\n/_-卡-_\\\n(益 有毒)"
+            },
+            { 
+                name: '赛博抹茶面粉怪', quote: '“抹茶外皮包鲱鱼罐头才是未来！”', hp: 110, maxHp: 110,
+                ascii: "   /\\\n  /  \\\n / 邪 \\\n/_-道-_\\\n(ʘдʘ╬)凸"
+            },
+            { 
+                name: '无味白粽隐修士', quote: '“真正的圣洁，是糯米不沾一丝烟火气。”', hp: 130, maxHp: 130,
+                ascii: "   /\\\n  /  \\\n / 虚 \\\n/_-无-_\\\n( = _ = )"
+            },
+            { 
+                name: '终极深渊蜜枣神', quote: '“颤抖吧！红枣核将卡住你们的喉咙！”', hp: 150, maxHp: 150,
+                ascii: "    /\\\n   /  \\\n  / 终 \\\n /  极  \\\n/_-蜜枣-_\\\n(凸益凸)🔥🔥"
+            }
+        ];
+
+        const OBSTACLES = [
+            { title: '🟠 蜜枣大结界拦截', desc: '甜党扔出了阻碍红枣！', hp: 5, className: 'obs-type-0' },
+            { title: '🟣 高浓度糖浆粘滞', desc: '键盘侠泼洒了阻糖粘液！', hp: 9, className: 'obs-type-1' },
+            { title: '🔴 赛博抹茶高压墙', desc: '异教徒升起了抹茶电网！', hp: 13, className: 'obs-type-2' }
+        ];
+
+        const WIN_BADGES = [
+            "🏆 咸肉大粽因果律大魔导",
+            "🏆 终极美味·高汤脂肪制裁者",
+            "🏆 外婆意志的绝对继承人",
+            "🏆 甜党圣殿的物理超度大师",
+            "🏆 蛋黄流油沙沙艺术终身成就奖",
+            "🏆 咸肉因果律·绝对真理裁决官",
+            "🏆 深夜报社流派全服第一手速狂魔"
+        ];
+        const WIN_DESCS = [
+            "太伟大了！你用无情、滚烫且流油的五花肉汁，彻底洗脑了所有的厨房异端！甜党全面溃败，含泪吃下了咸蛋黄大粽并大喊真香！",
+            "你手速如风，结界在你面前宛如脆皮！今天，厨房的因果律由你改写，世界重新回到了咸肉粽正统统治的黄金时代！"
+        ];
+
+        const LOSE_BADGES = [
+            "☠️ ERR-502: 被白糖甜晕的无力败犬",
+            "☠️ ERR-403: 卡路里公式的终身囚徒",
+            "☠️ ERR-418: 被蜜枣核卡住喉咙的落魄骑士",
+            "☠️ ERR-500: 被抹茶鲱鱼罐头击穿的底层码农",
+            "☠️ ERR-000: 外婆看了直摇头的漏米新手"
+        ];
+        const LOSE_DESCS = [
+            "倒计时归零！甜党的精制糖防线过于顽固，你被甜腻的蜜枣大潮和无味白粽彻底淹没，肉粽党的荣光在你手中熄灭了……",
+            "手速慢了！你未能撕碎最后的结界，厨房不合作运动宣告失败。今晚，你只能被迫去吃沾满白糖的冷粽子了！"
+        ];
+
+        let currentEnemyIndex = 0;
+        let currentEnemyHp = 70;
+        let killCount = 0;
+        let draggedCardData = null;
+        
+        let timeLeft = 30;
+        let timerInterval = null;
+        let isGameOver = false;
+        let isGameStarted = false; 
+
+        let obstacleActive = false;
+        let obstacleHp = 5;
+
+        let isFrenzyMode = false;
+        let frenzyClicks = 0;
+
+        let activeTouchCard = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        const handArea = document.getElementById('hand-area');
+        const enemyBox = document.getElementById('enemy-box');
+        const logWindow = document.getElementById('log-window');
+        const timerBox = document.getElementById('timer-box');
+        const frenzyBanner = document.getElementById('frenzy-banner');
+
+        // 📡 自定义弹窗核心控制器
+        function openCustomAlert() {
+            document.getElementById('custom-alert-box').classList.remove('hidden');
+        }
+        function closeCustomAlert() {
+            document.getElementById('custom-alert-box').classList.add('hidden');
+        }
+
+        function startGameFromWelcome() {
+            document.getElementById('welcome-screen').classList.add('fade-out');
+            isGameStarted = true;
+            startTimer(); 
+        }
+
+        function initGame() {
+            loadEnemy(currentEnemyIndex);
+            drawHand();
+        }
+
+        function startTimer() {
+            if (!isGameStarted) return;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (isGameOver) return;
+                timeLeft--;
+                document.getElementById('timer-num').innerText = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    gameOver(false);
+                }
+            }, 1000);
+        }
+
+        function loadEnemy(index) {
+            if(index >= ENEMIES.length) {
+                gameOver(true);
+                return;
+            }
+            timeLeft = 30;
+            document.getElementById('timer-num').innerText = timeLeft;
+            timerBox.classList.remove('timer-flash');
+
+            isFrenzyMode = false;
+            frenzyClicks = 0;
+            frenzyBanner.classList.add('hidden');
+            enemyBox.className = ''; 
+            document.getElementById('guide-text').innerText = "💡 玩法：拖拽下方卡牌到线条粽子区域！理智打光后疯狂连点超度！(支持手机触屏拖拽)";
+            document.getElementById('dash-resist').innerText = "DEGRADED";
+            document.getElementById('dash-resist').style.color = "#ffcc00";
+
+            const data = ENEMIES[index];
+            currentEnemyHp = data.hp;
+            document.getElementById('enemy-name').innerText = data.name;
+            document.getElementById('enemy-quote').innerText = data.quote;
+            document.getElementById('enemy-ascii').innerText = data.ascii;
+            document.getElementById('hp-text').innerText = currentEnemyHp;
+            document.getElementById('max-hp-text').innerText = data.maxHp;
+            
+            updateHpBar(data.maxHp);
+        }
+
+        function drawHand() {
+            if(isGameOver || isFrenzyMode) return;
+            handArea.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const randCard = CARD_POOL[Math.floor(Math.random() * CARD_POOL.length)];
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.draggable = true;
+                cardEl.innerHTML = `
+                    <div class="card-title">${randCard.title}</div>
+                    <div class="card-desc">${randCard.desc}</div>
+                    <div style="font-size:11px; color:#ff3366; text-align:right;">破防威力: ${randCard.dmg}</div>
+                `;
+                
+                cardEl.addEventListener('dragstart', (e) => {
+                    if(obstacleActive) {
+                        e.preventDefault();
+                        addLog(`[拦截] 结界未除！手牌锁定！先点碎中间的障碍！`, 'log-alert');
+                        return;
+                    }
+                    draggedCardData = randCard;
+                    cardEl.style.opacity = '0.4';
+                });
+                cardEl.addEventListener('dragend', () => { cardEl.style.opacity = '1'; });
+
+                cardEl.addEventListener('touchstart', (e) => {
+                    if (obstacleActive) {
+                        addLog(`[拦截] 结界未除！手牌锁定！先点碎中间的障碍！`, 'log-alert');
+                        return;
+                    }
+                    if (isFrenzyMode || isGameOver) return;
+                    
+                    draggedCardData = randCard;
+                    activeTouchCard = cardEl;
+                    cardEl.style.position = 'fixed';
+                    cardEl.style.zIndex = '1000';
+                    cardEl.style.pointerEvents = 'none';
+                    cardEl.style.opacity = '0.8';
+                    cardEl.style.boxShadow = '0 10px 20px rgba(0,255,102,0.5)';
+                    
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX - cardEl.offsetWidth / 2;
+                    touchStartY = touch.clientY - cardEl.offsetHeight / 2;
+                    
+                    cardEl.style.left = touchStartX + 'px';
+                    cardEl.style.top = touchStartY + 'px';
+                });
+
+                cardEl.addEventListener('touchmove', (e) => {
+                    if (!activeTouchCard) return;
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const x = touch.clientX - activeTouchCard.offsetWidth / 2;
+                    const y = touch.clientY - activeTouchCard.offsetHeight / 2;
+                    activeTouchCard.style.left = x + 'px';
+                    activeTouchCard.style.top = y + 'px';
+
+                    const enemyRect = enemyBox.getBoundingClientRect();
+                    if (touch.clientX >= enemyRect.left && touch.clientX <= enemyRect.right &&
+                        touch.clientY >= enemyRect.top && touch.clientY <= enemyRect.bottom) {
+                        if(!isFrenzyMode) enemyBox.classList.add('drop-hover');
+                    } else {
+                        enemyBox.classList.remove('drop-hover');
+                    }
+                });
+
+                cardEl.addEventListener('touchend', (e) => {
+                    if (!activeTouchCard) return;
+                    enemyBox.classList.remove('drop-hover');
+                    
+                    const touch = e.changedTouches[0];
+                    const enemyRect = enemyBox.getBoundingClientRect();
+                    
+                    if (touch.clientX >= enemyRect.left && touch.clientX <= enemyRect.right &&
+                        touch.clientY >= enemyRect.top && touch.clientY <= enemyRect.bottom) {
+                        if (!isFrenzyMode && !isGameOver) {
+                            executeMove(draggedCardData);
+                        }
+                    }
+                    
+                    activeTouchCard = null;
+                    draggedCardData = null;
+                    drawHand();
+                });
+
+                handArea.appendChild(cardEl);
+            }
+        }
+
+        function triggerObstacle() {
+            if (obstacleActive || isFrenzyMode) return;
+            obstacleActive = true;
+            
+            const obsType = Math.floor(Math.random() * OBSTACLES.length);
+            const obsData = OBSTACLES[obsType];
+            obstacleHp = obsData.hp;
+            
+            const obsEl = document.getElementById('obstacle-card');
+            document.getElementById('obs-title').innerText = obsData.title;
+            document.getElementById('obs-desc').innerText = obsData.desc;
+            document.getElementById('obs-hp').innerText = obstacleHp;
+            
+            obsEl.className = obsData.className; 
+            obsEl.classList.remove('hidden');
+            
+            addLog(`[突发防御] 对方张开了 【${obsData.title}】！迅速点击 ${obstacleHp} 次击碎它！`, 'log-alert');
+        }
+
+        function hitObstacle() {
+            if (!obstacleActive) return;
+            obstacleHp--;
+            document.getElementById('obs-hp').innerText = obstacleHp;
+            if (obstacleHp <= 0) {
+                obstacleActive = false;
+                document.getElementById('obstacle-card').className = 'hidden';
+                addLog(`> 结界烟消云散！肉粽香气继续无孔不入！`, 'log-system');
+            }
+        }
+
+        function clickEnemyFrenzy() {
+            if (!isFrenzyMode || isGameOver) return;
+            
+            frenzyClicks++;
+            addLog("💥 极限爆锤超度中！圣光洗脑度: " + frenzyClicks + "/15", 'log-flavor');
+
+            if (frenzyClicks >= 15) {
+                isFrenzyMode = false;
+                frenzyBanner.classList.add('hidden');
+                enemyBox.className = 'converted'; 
+                
+                addLog(`✨✨ 咸党万岁！！！ ✨✨`, 'log-win');
+                addLog(`[系统] ${ENEMIES[currentEnemyIndex].name} 的防线在最后一锤中彻底熔断！`, 'log-win');
+                
+                killCount++;
+                document.getElementById('kill-count').innerText = killCount;
+
+                currentEnemyIndex++;
+                setTimeout(() => { loadEnemy(currentEnemyIndex); drawHand(); }, 1200);
+            }
+        }
+
+        enemyBox.addEventListener('dragover', (e) => { e.preventDefault(); if(!isFrenzyMode) enemyBox.classList.add('drop-hover'); });
+        enemyBox.addEventListener('dragleave', () => { enemyBox.classList.remove('drop-hover'); });
+        enemyBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            enemyBox.classList.remove('drop-hover');
+            if (!draggedCardData || isFrenzyMode) return;
+
+            executeMove(draggedCardData);
+            draggedCardData = null;
+            drawHand();
+        });
+
+        function executeMove(card) {
+            const currentEnemy = ENEMIES[currentEnemyIndex];
+            if (!currentEnemy) return;
+
+            currentEnemyHp -= card.dmg;
+            if(currentEnemyHp <= 0) {
+                currentEnemyHp = 0;
+                activateFrenzyMode();
+            }
+
+            document.getElementById('hp-text').innerText = currentEnemyHp;
+            updateHpBar(currentEnemy.maxHp);
+
+            addLog(`> 你丢出了武器 ${card.title}`, 'log-system');
+
+            if (Math.random() < 0.35 && currentEnemyHp > 0) {
+                triggerObstacle();
+            }
+        }
+
+        function activateFrenzyMode() {
+            isFrenzyMode = true;
+            frenzyClicks = 0;
+            handArea.innerHTML = ''; 
+            
+            enemyBox.classList.add('frenzy-active');
+            timerBox.classList.add('timer-flash');
+            frenzyBanner.classList.remove('hidden');
+            
+            document.getElementById('dash-resist').innerText = "CRITICAL_BREAK";
+            document.getElementById('dash-resist').style.color = "#ff3333";
+
+            document.getElementById('guide-text').innerText = "🔥 目标粽理智归零！现在开始！狂点中间的线条粽子进行洗脑！！";
+            addLog(`⚠️ [决胜时刻] 对方已被高汤香气打入僵直！开始疯狂点击中间的线条粽子！`, 'log-alert');
+        }
+
+        function updateHpBar(maxHp) {
+            const pct = Math.max(0, Math.min(100, (currentEnemyHp / maxHp) * 100));
+            document.getElementById('enemy-hp').style.width = pct + '%';
+        }
+
+        function addLog(text, className) {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${className}`;
+            entry.innerText = text;
+            logWindow.appendChild(entry);
+            logWindow.scrollTop = logWindow.scrollHeight;
+        }
+
+        function gameOver(isWin) {
+            isGameOver = true;
+            clearInterval(timerInterval);
+            
+            const overlay = document.getElementById('overlay');
+            const titleEl = document.getElementById('result-title');
+            const badgeEl = document.getElementById('result-badge');
+            const descEl = document.getElementById('result-desc');
+            const actionBtn = document.getElementById('action-btn');
+            
+            overlay.classList.remove('hidden');
+            
+            if (isWin) {
+                titleEl.innerText = "🎉 咸党狂欢 · 征服全场 🎉";
+                titleEl.style.color = "#00ff66";
+                
+                const randBadge = WIN_BADGES[Math.floor(Math.random() * WIN_BADGES.length)];
+                badgeEl.innerText = randBadge;
+                badgeEl.style.color = "#00ff66";
+                badgeEl.style.borderColor = "#00ff66";
+                
+                descEl.innerText = WIN_DESCS[Math.floor(Math.random() * WIN_DESCS.length)];
+                actionBtn.style.display = "block";
+            } else {
+                titleEl.innerText = "❌ 阵线溃败 · 白糖统治 ❌";
+                titleEl.style.color = "#ff3333";
+                
+                const randBadge = LOSE_BADGES[Math.floor(Math.random() * LOSE_BADGES.length)];
+                badgeEl.innerText = randBadge;
+                badgeEl.style.color = "#ff3333";
+                badgeEl.style.borderColor = "#ff3333";
+                
+                descEl.innerText = LOSE_DESCS[Math.floor(Math.random() * LOSE_DESCS.length)];
+                actionBtn.style.display = "none";
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
