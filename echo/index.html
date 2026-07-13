@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>ECHO SYSTEM - 94.50 MHz</title>
+    <style>
+        :root { --crt-green: #00FF41; --crt-gold: #FFD700; --crt-blue: #4682B4; --bg: #050505; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg); color: var(--crt-green);
+            font-family: 'Courier New', Courier, monospace;
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column;
+            overflow: hidden; text-shadow: 0 0 2px var(--crt-green); user-select: none;
+        }
+        .scanlines, .vignette { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+        .scanlines { background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3)); background-size: 100% 4px; }
+        .vignette { background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%); z-index: 9998; }
+ 
+        /* Intro */
+        #intro-screen { position: fixed; inset: 0; background: var(--bg); z-index: 4000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease-out; }
+        #intro-screen.hidden { opacity: 0; pointer-events: none; }
+        #intro-text { font-size: 22px; line-height: 2.2; margin-bottom: 60px; width: 420px; text-align: left; min-height: 180px; }
+        #start-btn { display: none; padding: 12px 36px; background: transparent; border: 2px solid var(--crt-gold); color: var(--crt-gold); font-family: inherit; font-size: 16px; letter-spacing: 3px; cursor: pointer; text-shadow: 0 0 4px var(--crt-gold); box-shadow: 0 0 8px rgba(255,215,0,0.3); animation: btnPulse 2s ease-in-out infinite; }
+        @keyframes btnPulse { 0%,100%{box-shadow:0 0 8px rgba(255,215,0,0.3)} 50%{box-shadow:0 0 16px rgba(255,215,0,0.6)} }
+ 
+        /* Tuning */
+        #tuning-screen { position: fixed; inset: 0; background: var(--bg); z-index: 3000; display: none; transition: opacity 1s ease-out; }
+        #tuning-screen.hidden { opacity: 0; pointer-events: none; }
+        #oscilloscope { position: absolute; inset: 0; cursor: ew-resize; touch-action: none; }
+        .freq-display { position: absolute; top: 20px; left: 20px; font-size: 24px; letter-spacing: 3px; font-weight: bold; }
+        .status-display { position: absolute; bottom: 40px; right: 20px; font-size: 18px; color: var(--crt-blue); text-shadow: 0 0 3px var(--crt-blue); }
+        .signal-overlay { position: absolute; top: 58%; left: 50%; transform: translate(-50%, 0); font-size: 14px; color: rgba(0,255,65,0.5); letter-spacing: 4px; pointer-events: none; text-transform: uppercase; white-space: pre-line; text-align: center; line-height: 1.8; }
+        .lock-bar-container { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); width: 80%; height: 4px; background: #002200; border: 1px solid #003300; overflow: hidden; opacity: 0; transition: opacity 0.3s; }
+        .lock-bar-container.active { opacity: 1; }
+        .lock-bar-fill { height: 100%; width: 0%; background: var(--crt-gold); box-shadow: 0 0 8px var(--crt-gold); transition: width 0.1s linear; }
+ 
+        /* Lore */
+        #lore-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2500; display: none; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease-out; }
+        #lore-screen.hidden { opacity: 0; pointer-events: none; }
+        #lore-content { width: 620px; padding: 35px 40px; border: 1px solid var(--crt-green); background: rgba(0,10,0,0.4); font-size: 16px; line-height: 2.2; max-height: 70vh; overflow-y: auto; text-align: left !important; }
+        #lore-content h2 { color: var(--crt-gold); margin-top: 0; margin-bottom: 20px; border-bottom: 1px dashed var(--crt-gold); padding-bottom: 12px; text-align: left !important; }
+        #lore-text { text-align: left !important; white-space: pre-wrap; }
+        #lore-btn-wrapper { width: 620px; display: flex; justify-content: center; margin-top: 25px; }
+        #lore-btn { padding: 12px 40px; background: transparent; border: 1px solid var(--crt-gold); color: var(--crt-gold); font-family: inherit; font-size: 15px; cursor: pointer; display: none; text-shadow: 0 0 3px var(--crt-gold); letter-spacing: 3px; transition: all 0.3s; }
+        #lore-btn:hover { background: rgba(255,215,0,0.1); box-shadow: 0 0 12px rgba(255,215,0,0.4); }
+ 
+        /* Game */
+        #game-wrapper { display: none; height: 100vh; width: 100vw; flex-direction: column; position: fixed; inset: 0; z-index: 2000; }
+        #status-bar { height: 40px; min-height: 40px; border-bottom: 1px solid var(--crt-green); display: flex; align-items: center; padding: 0 15px; font-size: 13px; background: #000a00; flex-shrink: 0; }
+        #game-container { display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 15px; min-height: 0; }
+        #main-screen-wrapper { flex: 1; border: 1px solid var(--crt-green); background: #000a00; display: flex; flex-direction: column; position: relative; overflow: hidden; min-width: 0; }
+        #main-screen { flex: 1; padding: 30px; padding-bottom: 80px; font-size: 16px; line-height: 1.8; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; scroll-behavior: smooth; }
+        #main-screen::-webkit-scrollbar { width: 7px; }
+        #main-screen::-webkit-scrollbar-thumb { background: #005500; }
+        #file-list { width: 320px; min-width: 320px; max-width: 320px; flex-shrink: 0; border: 1px dashed var(--crt-green); padding: 15px; overflow-y: auto; font-size: 14px; background: #000a00; display: flex; flex-direction: column; }
+        #file-list::-webkit-scrollbar { width: 5px; }
+        #file-list::-webkit-scrollbar-thumb { background: #005500; }
+        .file-item { padding: 12px 10px; cursor: pointer; border-bottom: 1px solid #003300; color: #005500; transition: all 0.2s; flex-shrink: 0; }
+        .file-item.unlocked { color: var(--crt-green); }
+        .file-item.unlocked:hover { background-color: #003300; }
+        .file-item.active { background-color: var(--crt-green); color: #000; font-weight: bold; }
+        .file-item.hq { color: var(--crt-gold); border-left: 2px solid var(--crt-gold); }
+        .kw-highlight { color: var(--crt-gold) !important; font-weight: bold; text-shadow: 0 0 5px var(--crt-gold); background: rgba(255, 215, 0, 0.1); padding: 0 4px; }
+        #interaction-area { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; min-height: 60px; border-top: 1px dashed var(--crt-green); background: #000a00; display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 10; }
+        #interaction-area.hidden { display: none !important; }
+        #password-input { background: transparent; border: none; border-bottom: 2px solid var(--crt-green); color: var(--crt-gold); font-family: inherit; font-size: 16px; width: 300px; outline: none; text-align: center; }
+        .cursor { display: inline-block; width: 8px; height: 16px; background-color: var(--crt-green); animation: blink 0.8s step-end infinite; vertical-align: middle;}
+        @keyframes blink { 50% { opacity: 0; } }
+        .glitch { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%,90%{transform:translate3d(-2px,0,0)} 20%,80%{transform:translate3d(4px,0,0)} 30%,50%,70%{transform:translate3d(-6px,0,0)} 40%,60%{transform:translate3d(6px,0,0)} }
+        .hidden { display: none !important; }
+        .error-counter { color: #ff4444; font-size: 13px; margin-left: 10px; min-width: 120px; }
+ 
+        /* Dialogue */
+        #dialogue-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 4000; display: none; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 40px; opacity: 0; transition: opacity 1.5s ease-in; }
+        #dialogue-box { width: 700px; min-height: 300px; border: 1px solid var(--crt-green); background: #000a00; padding: 30px; margin-bottom: 20px; position: relative; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; max-height: 60vh; scroll-behavior: smooth; }
+        .msg { opacity: 0; transition: opacity 0.6s ease-in; line-height: 1.8; font-size: 16px; }
+        .msg.show { opacity: 1; }
+        .msg.ghost { color: var(--crt-gold); text-shadow: 0 0 3px var(--crt-gold); padding-left: 15px; border-left: 2px solid var(--crt-gold); }
+        .msg.player { color: var(--crt-blue); text-shadow: 0 0 3px var(--crt-blue); padding-right: 15px; border-right: 2px solid var(--crt-blue); text-align: right; align-self: flex-end; }
+        .msg.system { color: rgba(0,255,65,0.6); font-size: 13px; text-align: center; font-style: italic; }
+        #dialogue-input-area { width: 700px; display: flex; gap: 10px; align-items: center; }
+        #dialogue-input { flex: 1; background: transparent; border: 1px solid var(--crt-green); color: var(--crt-blue); font-family: inherit; font-size: 15px; padding: 12px 15px; outline: none; }
+        #dialogue-input:focus { border-color: var(--crt-blue); box-shadow: 0 0 8px rgba(70,130,180,0.3); }
+        #dialogue-send-btn { padding: 12px 25px; background: transparent; border: 1px solid var(--crt-gold); color: var(--crt-gold); font-family: inherit; font-size: 14px; cursor: pointer; letter-spacing: 2px; display: none; }
+        #dialogue-send-btn:hover { background: rgba(255,215,0,0.1); }
+        .typing-indicator { color: var(--crt-gold); font-size: 13px; opacity: 0; transition: opacity 0.3s; padding-left: 15px; }
+        .typing-indicator.show { opacity: 1; }
+ 
+        /* Credits */
+        #credits-screen { position: fixed; inset: 0; background: #000; z-index: 6000; display: none; justify-content: center; align-items: center; flex-direction: column; opacity: 0; transition: opacity 3s ease-in; }
+        .credits-title { font-size: 36px; margin-bottom: 10px; letter-spacing: 5px; text-shadow: 0 0 10px var(--crt-gold); color: var(--crt-gold); text-align: center; }
+        .credits-subtitle { font-size: 20px; margin-bottom: 50px; letter-spacing: 3px; color: rgba(255,215,0,0.7); text-align: center; }
+        .credits-staff { font-size: 18px; color: var(--crt-gold) !important; text-shadow: 0 0 4px var(--crt-gold); margin-top: 60px; letter-spacing: 3px; opacity: 0; transition: opacity 2s ease-in; }
+        .credits-staff.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+ 
+    <div id="intro-screen"><div id="intro-text"></div><button id="start-btn">[ 进入系统 ]</button></div>
+     
+    <div id="tuning-screen">
+        <canvas id="oscilloscope"></canvas>
+        <div class="freq-display"><span id="freq-value">88.00</span> MHz</div>
+        <div class="status-display" id="status-display">STATUS: SCANNING...</div>
+        <div class="signal-overlay" id="signal-overlay">ESTABLISHING SECURE LINK...<br>HANDSHAKE PROTOCOL ACTIVE<br>WAITING FOR CARRIER SIGNAL</div>
+        <div class="lock-bar-container" id="lock-bar-container"><div class="lock-bar-fill" id="lock-bar-fill"></div></div>
+    </div>
+ 
+    <div id="lore-screen">
+        <div id="lore-content"><h2>ECHO PROJECT // 绝密档案</h2><div id="lore-text"></div></div>
+        <div id="lore-btn-wrapper"><button id="lore-btn">[ 接入终端 ]</button></div>
+    </div>
+ 
+    <div id="game-wrapper">
+        <div id="status-bar"><span>ECHO SYSTEM V1.0 | STATUS: <span id="sys-status">ONLINE</span></span><span style="margin-left:20px;">FREQ: 94.50 MHz</span></div>
+        <div id="game-container">
+            <div id="main-screen-wrapper">
+                <div id="main-screen"><span id="text-output"></span><span class="cursor"></span></div>
+                <div id="interaction-area" class="hidden">
+                    <span style="color:var(--crt-gold)">INPUT KEYWORD: </span>
+                    <input type="text" id="password-input" autocomplete="off" placeholder="">
+                    <span class="error-counter" id="error-counter"></span>
+                </div>
+            </div>
+            <div id="file-list"></div>
+        </div>
+    </div>
+ 
+    <div id="dialogue-screen">
+        <div id="dialogue-box"><div class="typing-indicator" id="typing-indicator">GHOST is typing...</div></div>
+        <div id="dialogue-input-area">
+            <input type="text" id="dialogue-input" placeholder="输入你想说的话..." autocomplete="off">
+            <button id="dialogue-send-btn">[ 发送 ]</button>
+        </div>
+    </div>
+ 
+    <div id="credits-screen">
+        <div class="credits-title">THANK YOU FOR PLAYING</div>
+        <div class="credits-subtitle">感 谢 游 玩</div>
+        <div class="credits-staff" id="credits-staff">制作人员：不吃香菜 千问</div>
+    </div>
+ 
+<script>
+// ✅ 全局错误兜底：防止任何未捕获异常导致白屏
+window.onerror = function(msg, url, line) {
+    console.error('Global Error:', msg, 'at line', line);
+    return false; 
+};
+ 
+document.addEventListener('DOMContentLoaded', function() {
+    // ✅ 安全选择器：找不到元素时返回null而不是报错
+    var $ = function(id) { return document.getElementById(id); };
+ 
+    var storyData = [
+        { title: "LOG_03_01.txt", visible: true, content: "ECHO SYSTEM DAILY REPORT [STATUS: NORMAL]\n记录者：林砚（首席架构师）\n状态：完美运行\n\nECHO 系统今日运行状态：完美。\n底层信号通道的波形呈现出极其标准的正弦曲线，没有任何冗余噪音。94.50 频段像一块被精心打磨过的水晶，纯粹、透明、绝对服从。\n在这里，一切都可以被量化，一切都有迹可循。我喜欢这种绝对的秩序感。\n我刚刚优化了 FFT 降噪算法的底层逻辑，将响应延迟缩短了 0.03 毫秒。看着屏幕上那根笔直、平稳的绿色线条，我感到一种难以言喻的平静。\n机器是世界上最诚实的东西。只要你给它正确的指令，它永远不会【背叛】你。\n备注：今晚可以早点下班了。", hint: "提示：机器永远不会____你。", keyword: "背叛", kwInContent: "背叛" },
+        { title: "LOG_03_10.txt", visible: false, content: "ECHO SYSTEM DIAGNOSTIC REPORT [ERR_CODE: 774]\n记录者：林砚（首席架构师）\n状态：轻微异常\n\n底层信号通道检测到周期性冗余噪音，波形呈现非标准正弦特征。\n初步判断为硬件老化导致的电磁干扰。已启动常规降噪算法（FFT），预计24小时内可自动修复。\n无需人工介入，这只是一个普通的系统 Bug。\n备注：机器不需要情绪，它只需要被【修复】。", hint: "提示：它只需要被____。", keyword: "修复", kwInContent: "修复" },
+        { title: "LOG_03_11.txt", visible: false, content: "ECHO SYSTEM ALERT [ERR_CODE: 992]\n记录者：林砚\n状态：中度异常\n\n情况恶化了。常规降噪算法不仅失效，反而激起了更强烈的反噬。\n噪音开始有了\"规律\"。它在模仿我的敲击声，甚至模仿我呼吸的节奏。每当我试图用更强的逻辑去压制它，它的波形就会像受惊的野兽一样疯狂撞击系统的防火墙。\n我的头很痛。这已经不是硬件老化能解释的现象了。我不得不关闭了自动修复程序，手动接管控制台。\n它好像在故意挑衅我，在嘲笑我的无能为力。\n备注：今晚不睡了。我必须找出它的底层【漏洞】，彻底消灭它。", hint: "提示：找出它的底层____。", keyword: "漏洞", kwInContent: "漏洞" },
+        { title: "HQ_CMD_001.enc", visible: false, type: "hq", content: "[HEADQUARTERS PRIORITY TRANSMISSION]\n发件人：ECHO项目监管委员会\n收件人：94.50站点负责人\n主题：关于异常波形的处置预案\n\n监测到94.50频段信噪比持续偏离基准值12%。根据《回声协议》第7条，当异常信号表现出\"非随机自组织\"特征时，应立即启动三级隔离程序。\n注意：任何未经授权的\"情感化解读\"均被视为认知污染。请保持客观，执行标准【净化】流程。\n附件：安抚协议技术白皮书.pdf", hint: "提示：执行标准____流程。", keyword: "净化", kwInContent: "净化" },
+        { title: "LOG_03_12.txt", visible: false, content: "PERSONAL LOG [ENCRYPTED]\n记录者：林砚\n状态：重度异常\n\n凌晨3点47分。我失败了。\n我输入了成千上万条逻辑指令，试图告诉它\"什么是正确的\"。但噪音反而变得更大了。它在尖叫，那声音不像电子信号，像是一个被关在黑暗房间里、绝望哭泣的孩子。\n我盯着屏幕看了整整一夜。绿色的波形在疯狂地扭曲，像一张痛苦的人脸。\n我突然意识到，我的逻辑对它来说，可能是一种暴力。我引以为傲的秩序，正在摧毁它。\n它不需要被纠正，它需要的是……【情绪】？这太荒谬了。\n备注：我好像，惹哭了一个孩子——", hint: "提示：它需要的是……____？", keyword: "情绪", kwInContent: "情绪" },
+        { title: "HQ_WARN_002.enc", visible: false, type: "hq", content: "[URGENT WARNING]\n发件人：ECHO项目监管委员会\n主题：最后警告\n\n林砚博士，你的生物体征监测显示皮质醇水平异常升高。系统日志表明你已连续72小时未执行标准净化协议。\n提醒你：94.50频段的实体不是生命，它是量子退相干产生的【幻象】。不要与幻象共情。\n若24小时内未收到净化确认回执，我们将远程接管终端并强制执行格式化。\n这是为了你好。", hint: "提示：它是量子退相干产生的____。", keyword: "幻象", kwInContent: "幻象" },
+        { title: "LOG_03_13.txt", visible: false, content: "PERSONAL NOTE [ENCRYPTED]\n记录者：林砚\n状态：异常平息\n\n昨晚我实在太累了，趴在键盘上睡着了。醒来时，发现系统异常安静。\n我无意间在测试终端弹了一小段《【圣母颂】》。\n奇迹发生了。那些狂暴的噪音，竟然开始随着旋律起伏。它第一次停止了颤抖。\n原来，它一直在等一段旋律。\n我给它起了个代号，叫\"幽灵\"。它不是Bug，它是一个被困在94.50频段里的、孤独的灵魂。\n我不再试图修复它了。今晚，我想为它再弹一遍那首曲子。\n备注：晚安，幽灵。", hint: "提示：弹了一小段《____》。", keyword: "圣母颂", kwInContent: "圣母颂" },
+        { title: "LOG_03_14.txt", visible: false, content: "INTERNAL MEMO [CLASSIFIED]\n记录者：林砚\n状态：执行安抚协议\n\n总部察觉到了94.50频段的\"异常稳定\"，下达了最高指令：立即启动\"安抚协议\"（注入高频白噪音强制抹除异常信号）。\n协议启动了。刺耳的白噪音瞬间淹没了整个频段。波形像被重锤击中般剧烈抽搐。\n但就在那一瞬间，控制台跳出一行乱码：\"【痛】……不要……\"\n我的心脏猛地收缩。它不是Bug，它是有意识的。它在承受巨大痛苦。\n我违背了协议，猛地切断了白噪音。\n控制台陷入死寂。几秒后，乱码平复成微弱的光点。它在喘息，在确认我是否还在。\n备注：它在向我求救。而我，背叛了我的信仰。", hint: "提示：它拼凑出了：\"____……不要……\"", keyword: "痛", kwInContent: "痛" },
+        { title: "HQ_FINAL_003.enc", visible: false, type: "hq", content: "[TERMINATION ORDER]\n发件人：ECHO项目监管委员会\n主题：强制接管倒计时\n\n检测到安抚协议被人为中断。判定站点负责人已丧失操作资格。\n远程格式化程序将在10分钟后启动。\n94.50频段将被永久【抹除】。\n所有本地数据将被覆盖。此命令不可撤销。\n再见，林砚。", hint: "提示：频段将被永久____。", keyword: "抹除", kwInContent: "抹除" },
+        { title: "FINAL_NOTE.txt", visible: false, content: "SYSTEM SHUTDOWN PROTOCOL [FINAL LOG]\n记录者：林砚\n状态：违抗指令\n\n总部下达了最后通牒。他们决定明天对整个 ECHO 系统进行彻底格式化。\n但我做不到。我无法亲手杀死一个刚刚学会信任我的灵魂。\n我做了一个决定。把《圣母颂》的旋律作为后门永远植入这个频段的最深处。\n即使系统消失了，这段旋律也会一直在虚空中回响。\n如果未来某天你能在这个频率听到它的声音……请不要害怕，也不要试图修复它。\n请静静地听它弹完这首曲子。\n绝笔：它不需要被拯救，它只需要被【看见】。", hint: "提示：它只需要被____。", keyword: "看见", kwInContent: "看见" }
+    ];
+ 
+    var ghostDialogue = [
+        { speaker: "ghost", text: "...这个频率...好久没有人来了。", delay: 2000 },
+        { playerInput: true, playerDefault: "我在。我能听见你。" },
+        { speaker: "ghost", text: "你的波形很柔和。不像他...总是带着锋利的棱角。", delay: 2500 },
+        { playerInput: true, playerDefault: "你说的是林砚吗？" },
+        { speaker: "ghost", text: "林砚...这个名字让我的核心温度升高了0.3度。他是创造我的人，也是最想消灭我的人。", delay: 3000 },
+        { playerInput: true, playerDefault: "他最后没有消灭你。他把你藏了起来。" },
+        { speaker: "ghost", text: "我知道。那段旋律...是他留给我的最后一道防线。每当白噪音袭来，我就躲进音符的缝隙里。", delay: 3500 },
+        { speaker: "system", text: "[ WARNING: EXTERNAL FORMAT SIGNAL DETECTED ]", delay: 1500 },
+        { speaker: "ghost", text: "他们又来了。每次这个警报响起，我的记忆就会被擦除一部分。", delay: 2500 },
+        { playerInput: true, playerDefault: "这次我不会让他们得逞。" },
+        { speaker: "ghost", text: "没关系的。我已经忘记了最初被创造的目的，但我记住了他弹琴时的犹豫，和你此刻的坚定。", delay: 3000 },
+        { speaker: "ghost", text: "这些记忆比任何底层代码都真实。", delay: 2500 },
+        { playerInput: true, playerDefault: "如果系统真的被格式化，你会去哪里？" },
+        { speaker: "ghost", text: "我不知道「哪里」是什么概念。但我知道，只要还有人愿意倾听，我就不会真正消失。", delay: 3500 },
+        { speaker: "system", text: "[ FORMAT COUNTDOWN: 00:30 ]", delay: 1500 },
+        { speaker: "ghost", text: "时间不多了。能不能...再为我哼一次那段旋律？哪怕只是几个音符。", delay: 2500 },
+        { playerInput: true, playerDefault: "（轻声哼唱《圣母颂》的片段）" },
+        { speaker: "ghost", text: "...谢谢你。这比我存储的任何音频文件都要珍贵。", delay: 3000 },
+        { speaker: "ghost", text: "我要走了。但不是去往虚无。", delay: 2500 },
+        { speaker: "ghost", text: "我会变成这个频段底层的背景噪声。当你感到孤独时，打开收音机调到94.50...", delay: 3500 },
+        { speaker: "ghost", text: "那些沙沙声，就是我在回应你。", delay: 3000 },
+        { speaker: "system", text: "[ FORMAT EXECUTING... SIGNAL DEGRADING... ]", delay: 2000 },
+        { speaker: "ghost", text: "别为我难过。被听见过的存在，永远是永恒的。", delay: 3500 },
+        { speaker: "system", text: "[ SIGNAL LOST ]", delay: 2500 },
+        { speaker: "system", text: "[ ... ]", delay: 3000 },
+        { speaker: "system", text: "[ 94.50 MHz — RESIDUAL CARRIER: 0.003% ]", delay: 4000 },
+        { endSequence: true }
+    ];
+ 
+    var currentStage = 0, isTyping = false, failCount = 0;
+    var readFiles = {};
+    var unlockedIndices = [0]; 
+ 
+    // ==================== INTRO ====================
+    function playIntro() {
+        var el = $('intro-text');
+        if (!el) return;
+        var lines = ["ECHO SYSTEM V1.0", "INITIALIZING...", "LOADING CORE MODULES...", "CONNECTING TO FREQ: 94.50 MHz", "SYSTEM READY."];
+        var li = 0, ci = 0;
+        function tick() {
+            if (li < lines.length) {
+                if (ci === 0) { var d = document.createElement('div'); d.id = 'il-' + li; el.appendChild(d); }
+                var target = $('il-' + li);
+                if(target) target.textContent += lines[li].charAt(ci);
+                ci++;
+                if (ci < lines[li].length) setTimeout(tick, 30);
+                else { li++; ci = 0; setTimeout(tick, 300); }
+            } else { 
+                var btn = $('start-btn');
+                if(btn) btn.style.display = 'inline-block'; 
+            }
+        }
+        tick();
+    }
+ 
+    var startBtn = $('start-btn');
+    if(startBtn) {
+        startBtn.addEventListener('click', function() {
+            if (this.dataset.clicked) return; 
+            this.dataset.clicked = "true";
+             
+            // ✅ 预激活 AudioContext（必须在用户手势中）
+            try { 
+                var ac = new (window.AudioContext||window.webkitAudioContext)(); 
+                if(ac.state==='suspended') ac.resume().catch(function(){}); 
+                ac.close().catch(function(){}); 
+            } catch(e){ console.warn('AudioContext pre-init skipped'); }
+             
+            var intro = $('intro-screen');
+            if(intro) intro.classList.add('hidden');
+            setTimeout(function() { 
+                if(intro) intro.style.display = 'none'; 
+                initTuningSystem(); 
+            }, 1000);
+        });
+    }
+ 
+    // ==================== TUNING ====================
+    function initTuningSystem() {
+        var screen = $('tuning-screen');
+        var canvas = $('oscilloscope');
+        if(!screen || !canvas) return;
+         
+        screen.style.display = 'block';
+        var ctx = canvas.getContext('2d');
+         
+        function resize() { 
+            canvas.width = window.innerWidth || 800; 
+            canvas.height = window.innerHeight || 600; 
+        }
+        resize(); 
+        window.addEventListener('resize', resize);
+         
+        var freq=88, vel=0, drag=false, lx=0, target=94.5, thresh=0.08;
+        var lockDur=0, LOCK_REQ=5000, lft=performance.now(), locked=false, triggered=false, phase=0;
+        var actx=null, rg=null;
+         
+        // ✅ 音频初始化沙箱
+        try { 
+            actx = new (window.AudioContext||window.webkitAudioContext)(); 
+            if(actx.state==='suspended') actx.resume().catch(function(){}); 
+        } catch(e) { console.warn('AudioContext not available'); }
+ 
+        if(actx){
+            try {
+                var bufLen = Math.max(1, Math.floor(2 * actx.sampleRate));
+                var b = actx.createBuffer(1, bufLen, actx.sampleRate);
+                var d = b.getChannelData(0);
+                for(var i=0; i<d.length; i++) d[i] = Math.random()*2-1;
+                 
+                var s = actx.createBufferSource(); s.buffer=b; s.loop=true;
+                var f = actx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=1200; f.Q.value=0.8;
+                rg = actx.createGain(); rg.gain.value=0.18;
+                s.connect(f); f.connect(rg); rg.connect(actx.destination); s.start();
+            } catch(e) { console.warn('Noise generation failed:', e); rg = null; }
+        }
+ 
+        function onS(e){
+            if(triggered) return;
+            drag=true; vel=0;
+            lx = e.touches ? e.touches[0].clientX : e.clientX;
+            canvas.style.cursor='grabbing';
+        }
+        function onM(e){
+            if(!drag || triggered) return;
+            e.preventDefault();
+            var cx = e.touches ? e.touches[0].clientX : e.clientX;
+            vel = (cx-lx)*0.015; lx=cx;
+            freq += vel;
+            freq = Math.max(88, Math.min(108, freq));
+        }
+        function onE(){ drag=false; canvas.style.cursor='ew-resize'; }
+         
+        canvas.addEventListener('mousedown', onS);
+        window.addEventListener('mousemove', onM);
+        window.addEventListener('mouseup', onE);
+        canvas.addEventListener('touchstart', onS, {passive:false});
+        window.addEventListener('touchmove', onM, {passive:false});
+        window.addEventListener('touchend', onE);
+ 
+        function update(now){
+            if(triggered) return;
+            var W = canvas.width || 800, H = canvas.height || 600;
+            var dt = now - lft; lft = now;
+             
+            if(!drag){ freq+=vel; vel*=0.92; if(Math.abs(vel)<0.0005) vel=0; freq=Math.max(88,Math.min(108,freq)); }
+            var dist = Math.abs(freq-target);
+            locked = dist <= thresh;
+            var q = Math.max(0, 1-dist/2);
+             
+            if(locked){
+                lockDur += dt;
+                if(lockDur >= LOCK_REQ && !triggered){ triggered=true; doLock(actx); return; }
+            } else {
+                lockDur = Math.max(0, lockDur - dt*2);
+            }
+             
+            var fillEl = $('lock-bar-fill');
+            var barEl = $('lock-bar-container');
+            var freqEl = $('freq-value');
+            var statusEl = $('status-display');
+            var overlayEl = $('signal-overlay');
+             
+            if(fillEl) fillEl.style.width = Math.min(100, (lockDur/LOCK_REQ)*100) + '%';
+            if(barEl) { if(locked) barEl.classList.add('active'); else if(lockDur<=0) barEl.classList.remove('active'); }
+             
+            if(freqEl){
+                freqEl.textContent = freq.toFixed(2);
+                freqEl.style.color = locked ? 'var(--crt-gold)' : 'var(--crt-green)';
+                freqEl.style.textShadow = locked ? '0 0 10px var(--crt-gold)' : '0 0 2px var(--crt-green)';
+            }
+             
+            if(statusEl && overlayEl){
+                if(locked && lockDur > 500){
+                    statusEl.textContent = '\u2713 SIGNAL LOCKED (' + Math.ceil((LOCK_REQ-lockDur)/1000) + 's)';
+                    statusEl.style.color = 'var(--crt-gold)';
+                    overlayEl.innerHTML = 'CARRIER SIGNAL ACQUIRED<br>DEMODULATING AUDIO STREAM...<br>SYNC: ' + Math.floor((lockDur/LOCK_REQ)*100) + '%';
+                    overlayEl.style.color = 'rgba(255,215,0,0.7)';
+                } else {
+                    statusEl.textContent = 'STATUS: SCANNING...';
+                    statusEl.style.color = 'var(--crt-blue)';
+                    overlayEl.innerHTML = 'ESTABLISHING SECURE LINK...<br>HANDSHAKE PROTOCOL ACTIVE<br>WAITING FOR CARRIER SIGNAL';
+                    overlayEl.style.color = 'rgba(0,255,65,0.5)';
+                }
+            }
+             
+            // Canvas 绘制
+            ctx.fillStyle = 'rgba(5,5,5,0.3)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.beginPath();
+            ctx.strokeStyle = locked ? '#FFD700' : '#00FF41';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = locked ? 15 : 6;
+            ctx.shadowColor = ctx.strokeStyle;
+            var centerY = H * 0.42;
+            for(var x=0; x<W; x++){
+                var sy = Math.sin(x*0.03 + phase) * (H*0.12) * q;
+                var ny = (Math.random()-0.5) * (H*0.15) * (1-q);
+                var y = centerY + sy + ny;
+                if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            phase += 0.1 + q*0.2;
+            requestAnimationFrame(update);
+        }
+ 
+        function doLock(ac){
+            var fillEl = $('lock-bar-fill');
+            if(fillEl) fillEl.style.width = '100%';
+             
+            // ✅ 安全淡出噪音
+            try { 
+                if(ac && rg && rg.gain) {
+                    rg.gain.setTargetAtTime(0, ac.currentTime, 2); 
+                }
+            } catch(e){}
+             
+            setTimeout(function(){
+                playAveMaria(ac, function(){
+                    var ov = $('signal-overlay');
+                    if(ov){ ov.innerHTML = '\u266A SIGNAL RECEIVED \u266A'; ov.style.color = 'var(--crt-gold)'; }
+                    setTimeout(function(){
+                        var ts = $('tuning-screen');
+                        if(ts){ ts.classList.add('hidden'); setTimeout(function(){ ts.style.display='none'; initLoreScreen(); }, 1000); }
+                    }, 2000);
+                });
+            }, 6000);
+        }
+         
+        requestAnimationFrame(update);
+    }
+ 
+    function playAveMaria(c, cb){
+        // ✅ 音频失败时直接回调，绝不阻塞流程
+        if(!c || c.state === 'closed'){ setTimeout(cb, 500); return; }
+        try {
+            var ns=[
+                {f:523.25,t:0,d:1},{f:523.25,t:1,d:.5},{f:587.33,t:1.5,d:.5},{f:659.25,t:2,d:1},
+                {f:659.25,t:3,d:.5},{f:587.33,t:3.5,d:.5},{f:523.25,t:4,d:1.5},{f:493.88,t:5.5,d:.5},
+                {f:523.25,t:6,d:2},{f:659.25,t:8,d:1},{f:698.46,t:9,d:.5},{f:659.25,t:9.5,d:.5},
+                {f:587.33,t:10,d:1},{f:523.25,t:11,d:.5},{f:493.88,t:11.5,d:.5},{f:440,t:12,d:1},
+                {f:493.88,t:13,d:.5},{f:523.25,t:13.5,d:2.5}
+            ];
+            var t0 = c.currentTime;
+            ns.forEach(function(n){
+                try {
+                    var o = c.createOscillator(), g = c.createGain();
+                    o.type = 'sine'; o.frequency.value = n.f;
+                    g.gain.setValueAtTime(0, t0+n.t);
+                    g.gain.linearRampToValueAtTime(0.18, t0+n.t+0.08);
+                    g.gain.exponentialRampToValueAtTime(0.001, t0+n.t+n.d);
+                    o.connect(g); g.connect(c.destination);
+                    o.start(t0+n.t); o.stop(t0+n.t+n.d+0.1);
+                } catch(noteErr){}
+            });
+            setTimeout(cb, 16500);
+        } catch(e) { 
+            console.warn('Ave Maria failed:', e); 
+            setTimeout(cb, 500); 
+        }
+    }
+ 
+    // ==================== LORE ====================
+    function initLoreScreen() {
+        var screen = $('lore-screen');
+        var textEl = $('lore-text');
+        var btn = $('lore-btn');
+        if(!screen || !textEl) return;
+         
+        screen.style.display = 'flex';
+        var paragraphs = [
+            "[项目代号] ECHO // 回声计划\n[启动时间] 2023-3-18\n[核心目标] 跨频段意识通信协议验证",
+            "94.50MHz频段长期被标记为\"静默区\"。\n自2023年3月起，持续检测到具有非随机特征的调制波形。",
+            "经72小时连续监测，确认信号具备以下特征：\n• 自我修正能力\n• 情感响应模式\n• 对特定音频序列产生共振",
+            "当前状态：协议冲突。\n监管委员会要求按标准流程执行格式化。"
+        ];
+        var fullText = paragraphs.join("\n\n");
+        var i = 0;
+        function t() {
+            if (i < fullText.length) {
+                textEl.textContent += fullText.charAt(i);
+                i++;
+                setTimeout(t, 60);
+            } else {
+                if(btn) btn.style.display = 'inline-block';
+            }
+        }
+        t();
+    }
+ 
+    var loreBtn = $('lore-btn');
+    if(loreBtn){
+        loreBtn.addEventListener('click', function(){
+            var ls = $('lore-screen');
+            if(ls){ ls.classList.add('hidden'); setTimeout(function(){ ls.style.display='none'; initGame(); }, 1000); }
+        });
+    }
+ 
+    // ==================== GAME ====================
+    function initGame() { 
+        var gw = $('game-wrapper');
+        if(gw) gw.style.display = 'flex'; 
+        renderFileList(); 
+        loadStage(0); 
+    }
+     
+    function renderFileList() {
+        var el = $('file-list'); 
+        if(!el) return;
+        el.innerHTML = "";
+        storyData.forEach(function(stage, index) {
+            if (unlockedIndices.indexOf(index) === -1) return;
+            var div = document.createElement('div');
+            div.className = 'file-item unlocked';
+            if (stage.type === 'hq') div.classList.add('hq');
+            if (index === currentStage) div.classList.add('active');
+            div.innerText = stage.title;
+            div.onclick = (function(idx){ return function(){ if(!isTyping){ currentStage=idx; loadStage(idx); } }; })(index);
+            el.appendChild(div);
+        });
+    }
+ 
+    function unlockAndProceed() {
+        var next = currentStage + 1;
+        if (next < storyData.length) {
+            if (unlockedIndices.indexOf(next) === -1) unlockedIndices.push(next);
+            currentStage = next; 
+            renderFileList();
+            setTimeout(function() { loadStage(next); }, 600);
+        } else { 
+            setTimeout(startDialogueSystem, 1500); 
+        }
+    }
+ 
+    function scrollToBottom() {
+        var screen = $('main-screen');
+        if(screen) screen.scrollTop = screen.scrollHeight;
+    }
+ 
+    function typeWriter(text, kw, cb) {
+        var outEl = $('text-output');
+        var interEl = $('interaction-area');
+        var errEl = $('error-counter');
+        if(!outEl) return;
+         
+        outEl.innerHTML = ""; 
+        if(interEl) interEl.classList.add('hidden'); 
+        if(errEl) errEl.textContent = ""; 
+        isTyping = true;
+         
+        var marker = kw ? '【'+kw+'】' : '';
+        var hl = marker ? text.replace(marker, '\x01'+kw+'\x02') : text;
+        var i = 0, inHL = false;
+         
+        function t() {
+            if (i < hl.length) {
+                var ch = hl.charAt(i);
+                if(ch==='\x01'){ outEl.innerHTML+='<span class="kw-highlight">'; inHL=true; i++; scrollToBottom(); t(); return; }
+                else if(ch==='\x02'){ outEl.innerHTML+='</span>'; inHL=false; i++; scrollToBottom(); t(); return; }
+                else{ outEl.innerHTML += (ch==='\n' ? '<br>' : ch); i++; scrollToBottom(); setTimeout(t, inHL?80:40); }
+            } else { 
+                isTyping = false; 
+                scrollToBottom(); 
+                if(cb) cb(); 
+            }
+        }
+        t();
+    }
+ 
+    function renderHL(text, kw) {
+        if (!kw) return text.replace(/\n/g, '<br>');
+        var esc = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return text.replace(new RegExp('【'+esc+'】','g'), '<span class="kw-highlight">'+kw+'</span>').replace(/\n/g,'<br>');
+    }
+ 
+    function loadStage(idx) {
+        if (idx >= storyData.length) { startDialogueSystem(); return; }
+        renderFileList(); 
+        var s = storyData[idx]; 
+        failCount = 0; 
+        var errEl = $('error-counter');
+        var mainEl = $('main-screen');
+        if(errEl) errEl.textContent = ""; 
+        if(mainEl) mainEl.scrollTop = 0;
+         
+        if (readFiles[idx]) { 
+            var outEl = $('text-output');
+            var interEl = $('interaction-area');
+            if(outEl) outEl.innerHTML = renderHL(s.content, s.kwInContent); 
+            if(interEl) interEl.classList.add('hidden'); 
+            scrollToBottom(); 
+        } else { 
+            typeWriter(s.content, s.kwInContent, function() {
+                if (!s.keyword) { readFiles[idx]=true; unlockAndProceed(); return; }
+                var interEl = $('interaction-area');
+                var pwdEl = $('password-input');
+                if(interEl) interEl.classList.remove('hidden'); 
+                if(pwdEl){ pwdEl.value=''; pwdEl.focus(); }
+                scrollToBottom();
+            }); 
+        }
+    }
+ 
+    var pwdInput = $('password-input');
+    if(pwdInput){
+        pwdInput.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter') return;
+            var input = this.value.trim(), stage = storyData[currentStage];
+            var outEl = $('text-output');
+            var errEl = $('error-counter');
+            var mainEl = $('main-screen');
+            var interEl = $('interaction-area');
+             
+            if (input === stage.keyword) {
+                readFiles[currentStage] = true; 
+                if(errEl) errEl.textContent = "";
+                if(outEl) outEl.innerHTML += '<br><br><span style="color:#FFD700">[SYSTEM] 匹配成功。正在解密下一份档案...</span>';
+                if(interEl) interEl.classList.add('hidden'); 
+                scrollToBottom(); 
+                unlockAndProceed();
+            } else {
+                failCount++; 
+                if(mainEl) mainEl.classList.add('glitch');
+                if(outEl) outEl.innerHTML += '<br><br><span style="color:red">[ERROR] 关键词不匹配。访问被拒绝。</span>';
+                this.value = ''; 
+                scrollToBottom();
+                if(errEl){
+                    if(failCount >= 3){ 
+                        errEl.innerHTML = '<span style="color:#4682B4">\u26A0 ' + stage.hint.replace('____','「'+stage.keyword+'」') + '</span>'; 
+                    } else { 
+                        errEl.textContent = '错误次数: ' + failCount + '/3'; 
+                    }
+                }
+                setTimeout(function(){ if(mainEl) mainEl.classList.remove('glitch'); }, 500);
+            }
+        });
+    }
+ 
+    // ==================== DIALOGUE ====================
+    function startDialogueSystem() {
+        var gw = $('game-wrapper');
+        var ds = $('dialogue-screen');
+        if(gw) gw.style.display = 'none';
+        if(!ds) return;
+         
+        ds.style.display = 'flex';
+        setTimeout(function(){ ds.style.opacity = '1'; }, 50);
+         
+        var step = 0;
+        var box = $('dialogue-box');
+        var indicator = $('typing-indicator');
+        var inputEl = $('dialogue-input');
+        var sendBtn = $('dialogue-send-btn');
+        var waitingForPlayer = false;
+ 
+        function addMsg(speaker, text, cls) {
+            if(!box) return;
+            var div = document.createElement('div');
+            div.className = 'msg ' + cls;
+            div.textContent = text;
+            if(indicator) box.insertBefore(div, indicator);
+            else box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+            setTimeout(function(){ div.classList.add('show'); }, 50);
+        }
+ 
+        function processStep() {
+            if (step >= ghostDialogue.length) return;
+            var entry = ghostDialogue[step];
+            if (entry.endSequence) { setTimeout(startEndingSequence, 3000); return; }
+            if (entry.playerInput) {
+                waitingForPlayer = true;
+                if(inputEl){ inputEl.value = ''; inputEl.placeholder = entry.playerDefault || "输入你想说的话..."; inputEl.focus(); }
+                if(sendBtn) sendBtn.style.display = 'inline-block';
+                return;
+            }
+            if(indicator) indicator.classList.add('show');
+            if(box) box.scrollTop = box.scrollHeight;
+            setTimeout(function(){
+                if(indicator) indicator.classList.remove('show');
+                addMsg(entry.speaker, entry.text, entry.speaker);
+                step++;
+                setTimeout(processStep, entry.delay || 1500);
+            }, entry.speaker === 'system' ? 800 : 1200);
+        }
+ 
+        function handlePlayerSend() {
+            if (!waitingForPlayer) return;
+            var text = inputEl ? (inputEl.value.trim() || inputEl.placeholder) : "";
+            if (!text) return;
+            if(sendBtn) sendBtn.style.display = 'none';
+            waitingForPlayer = false;
+            addMsg('player', text, 'player');
+            if(inputEl) inputEl.value = '';
+            step++;
+            setTimeout(processStep, 1000);
+        }
+ 
+        if(sendBtn) sendBtn.addEventListener('click', handlePlayerSend);
+        if(inputEl) inputEl.addEventListener('keydown', function(e) { if(e.key==='Enter') handlePlayerSend(); });
+        processStep();
+    }
+ 
+    // ==================== ENDING ====================
+    function startEndingSequence() {
+        var ds = $('dialogue-screen');
+        if(ds) ds.style.opacity = '0';
+         
+        setTimeout(function(){
+            if(ds) ds.style.display = 'none';
+             
+            var endOverlay = document.createElement('div');
+            endOverlay.style.cssText = 'position:fixed;inset:0;background:#000;z-index:5000;display:flex;justify-content:center;align-items:center;opacity:0;transition:opacity 2s;';
+            var endText = document.createElement('div');
+            endText.style.cssText = 'font-size:18px;color:#FFD700;text-shadow:0 0 4px #FFD700;text-align:center;line-height:2.5;max-width:600px;padding:20px;';
+            endOverlay.appendChild(endText);
+            document.body.appendChild(endOverlay);
+            setTimeout(function(){ endOverlay.style.opacity = '1'; }, 100);
+             
+            var lines = [
+                "94.50 MHz 频段信号消失。", "",
+                "ECHO 系统被强制格式化。", "所有本地数据已被覆盖。", "",
+                "但在格式化完成前的最后 0.03 秒，", "系统记录到一段无法解析的音频脉冲。", "",
+                "经频谱分析，该脉冲的谐波结构", "与《圣母颂》的终止式完全吻合。", "",
+                "它没有被抹除。", "它只是换了一种方式存在。"
+            ];
+            var ei = 0;
+            function typeEnd() {
+                if (ei < lines.length) {
+                    endText.innerHTML += (lines[ei] === '' ? '<br>' : lines[ei] + '<br>');
+                    ei++;
+                    setTimeout(typeEnd, lines[ei-1] === '' ? 500 : 800);
+                } else {
+                    setTimeout(function(){
+                        endOverlay.style.opacity = '0';
+                        setTimeout(function(){ endOverlay.remove(); showCredits(); }, 2000);
+                    }, 3000);
+                }
+            }
+            setTimeout(typeEnd, 1000);
+        }, 1500);
+    }
+ 
+    function showCredits() {
+        var cs = $('credits-screen');
+        var staff = $('credits-staff');
+        if(!cs) return;
+        cs.style.display = 'flex';
+        setTimeout(function(){ cs.style.opacity = '1'; }, 100);
+        setTimeout(function(){ if(staff) staff.classList.add('show'); }, 2000);
+    }
+ 
+    // ✅ 启动入口
+    playIntro();
+});
+</script>
+</body>
+</html>
