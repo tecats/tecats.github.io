@@ -20,6 +20,7 @@
 
     const HL_RE = /\{([ckn]):([^{}]+)\}([\s\S]*?)\{\/\}/g;
     const SLOT_RE = /【填空:([^】]+)】/g;
+    const CHOICE_RE = /【选择】/g;
     const DIVIDER = '<hr class="divider" />';
 
     function escapeHtml(s) {
@@ -48,6 +49,7 @@
     const CN_HL_CLOSED = /\{([人线物记]):([^{}]+)\}([\s\S]*?)\{\/\}/g;
     const CN_HL_OPEN = /\{([人线物记]):([^{}]+)\}/g;
     const CN_SLOT_RE = /\{填:([^}]+)\}/g;
+    const CN_CHOICE_RE = /\{选\}/g;
     const CN_MAP = { 人: 'c', 线: 'k', 物: 'k', 记: 'n' };
     function translateCN(text) {
         text = text.replace(CN_HL_CLOSED, function (all, kind, id, content) {
@@ -58,6 +60,9 @@
         });
         text = text.replace(CN_SLOT_RE, function (all, ref) {
             return '【填空:' + ref + '】';
+        });
+        text = text.replace(CN_CHOICE_RE, function () {
+            return '【选择】';
         });
         return text;
     }
@@ -101,6 +106,11 @@
                 '" data-expect="' + block.id + '" data-answer="' + block.label + '"' +
                 (pickupType ? ' data-pickup="' + pickupType + '"' : '') +
                 '><span class="placeholder">______</span></span>';
+        });
+        text = text.replace(CHOICE_RE, function () {
+            // 分支固定选择锚点（{选}）：编译成一个「填空槽」外观的选择位。
+            // 点击后弹出手动选项卡片（与线索填空弹窗同款），选中后原地填入选项文字，与常规填空视觉一致。
+            return '<span class="slot choice-slot" data-choice="1"><span class="placeholder">______</span></span>';
         });
         return text;
     }
